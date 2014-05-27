@@ -10,19 +10,7 @@ This application has three files:
 *  template.html: the view for every task and deal with the data of the answers.
 *  tutorial.html: a simple tutorial for the volunteers.
 
-PyBossa application for analyzing light pollution
-=================================================
-
-This is an application from [Alejandro Sánchez de Miguel](http://guaix.fis.ucm.es/DarkSkies) in collaboration with
-Daniel and Crowdcrafting.org.
-
-This application has three files:
-
-*  createTasks.py: for creating the application in PyBossa, and fill it with some tasks.
-*  template.html: the view for every task and deal with the data of the answers.
-*  tutorial.html: a simple tutorial for the volunteers.
-
-![alt screenshot](http://i.imgur.com/0fhp4jx.png)
+![alt screenshot](http://i.imgur.com/0EOEIgC.png)
 
 Testing the application
 =======================
