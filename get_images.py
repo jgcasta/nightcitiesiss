@@ -25,30 +25,32 @@ def get_iss_photos():
     :arg string size: Size of the image from ISS mission
     :returns: A list of photos.
     :rtype: list
+    http://eol.jsc.nasa.gov/sseop/images/ESC/small/ISS030/ISS030-E-67805.JPG
     """
     photos = []
     lista=asciitable.read('datosISS.csv') # comprobar formato del fichero
 
     for i in lista:
-        mission=i['ISS-ID'].split('-E-')[0]
+        tmpMission=i['ISS-ID'].split('-E-')
+        mission = tmpMission[0]
+        idIss = tmpMission[1]
+        print idIss
         pattern_s = "http://eol.jsc.nasa.gov/sseop/images/ESC/%s/%s/%s-E-%s.JPG" % (
             "small",
             mission,
             mission,
-            i['ISS-ID'])
+            idIss)
         pattern_b = "http://eol.jsc.nasa.gov/sseop/images/ESC/%s/%s/%s-E-%s.JPG" % (
             'large',
             mission,
             mission,
-            i['ISS-ID'])
+            idIss)
         link = "http://eol.jsc.nasa.gov/scripts/sseop/photo.pl?mission=%s&roll=E&frame=%s" % (
             mission,
-            i['ISS-ID'])
-        idISS = i['ISS-ID']
+            idIss)
+        idISS = idIss
 
         nadirLon = str(i.citylon2)
-            
-            
 
         nadirLat = str(i.citylat2)
             
