@@ -216,7 +216,7 @@ pybossa.presentTask(function(task, deferred) {
                 task.answer.LONLAT = 'lonlat';
                 xy = '';
                 lonlat = '';
-                console.log("saving....."+task.answer.XY);
+                console.log("saving....."+document.dataList.xyValues);
                 pybossa.saveTask(task.id, task.answer).done(function() {
                     
                   $("#step1").show();
@@ -236,27 +236,6 @@ pybossa.presentTask(function(task, deferred) {
 
 
             }
-
-/*
-            if ((typeof answer != 'undefined') && (task.answer.sharp == '')) {
-                if ((answer == 'save'))
-                {
-                    $("#step1").hide();
-                    
-                  	task.answer.XY = xy;
-                    task.answer.LONLAT = lonlat;
-                    xy = '';
-                    lonlat = '';
-                    console.log("save"+task.answer);
-                    pybossa.saveTask(task.id, task.answer).done(function() {
-                        
-                        $("#step1").show();
-                        
-                    deferred.resolve();
-                });
-                }
-            }
-            */
         });
         $("#loading").hide();
     }
@@ -413,6 +392,18 @@ function removeOptions(){
       }
 
     }
+}
+
+function readAllValues(selectbox){
+  var i;
+  var ret;
+  for(i=selectbox.options.length-1;i>=0;i--){
+    
+    if(selectbox.options[i].value != ''){
+      ret += selectbox.options[i].value + ';';
+    }
+  }  
+  return ret;
 }
 
 function getIimDim(urlimage){
