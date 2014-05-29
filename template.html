@@ -203,7 +203,6 @@ pybossa.presentTask(function(task, deferred) {
         $('.btn-answer').off('click').on('click', function(evt) {
 
             var answer = $(evt.target).attr("value");
-            console.log('answer ' + answer);
 
             if (typeof answer != 'undefined') {
 
@@ -212,11 +211,17 @@ pybossa.presentTask(function(task, deferred) {
                 console.log('SAVE ');
                 $("#step1").hide();
                 
-                task.answer.XY = 'xy';
-                task.answer.LONLAT = 'lonlat';
+                task.answer.XY = readAllValues(document.dataList.xyValues);
+                task.answer.LONLAT = readAllValues(document.dataList.lonlatValues);
                 xy = '';
                 lonlat = '';
-                console.log("saving....."+document.dataList.xyValues);
+
+                console.log("saving....."+task.answer.XY);
+                
+                // para probar solo hasta que quiera grabar
+                $("#step1").show();
+                deferred.resolve();
+                
                 /*
                 pybossa.saveTask(task.id, task.answer).done(function() {
                     
@@ -395,13 +400,15 @@ function removeOptions(){
     }
 }
 
+
 function readAllValues(selectbox){
+  
   var i;
-  var ret;
-  for(i=selectbox.options.length-1;i>=0;i--){
+  var ret = new Array();
+  for(i=0;i<selectbox.options.length;i++){
     
-    if(selectbox.options[i].value != ''){
-      ret += selectbox.options[i].value + ';';
+    if(typeof selectbox.options[i].value != 'undefined'){
+      ret.push(selectbox.options[i].value + ';');
     }
   }  
   return ret;

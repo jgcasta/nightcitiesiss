@@ -1,7 +1,6 @@
 Nightcitiesiss Application for georreferencing cities at night images from ISS
 ==============================================================================
 
-
 Based on PyBossa, this application by [José Gómez Castaño](http://guaix.fis.ucm.es/DarkSkies) allows the georreference of City night images taken from International Space Station.
 
 This application has three files:
@@ -11,6 +10,8 @@ This application has three files:
 *  tutorial.html: a simple tutorial for the volunteers.
 
 ![alt screenshot](http://i.imgur.com/0EOEIgC.png)
+
+The application can be used at [Nigth Cites ISS](http://crowdcrafting.org/app/nightcitiesiss)
 
 Testing the application
 =======================
