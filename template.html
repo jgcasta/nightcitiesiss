@@ -78,7 +78,7 @@
         </div><!-- End of DIV for the submission buttons -->
         
 
-        <!-- This are maps -->
+        <!-- These are maps -->
         <div id="map" class="map"></div>
         <div id="mapOSM" class="mapOSM"></div>
         <!-- Data  -->
@@ -157,7 +157,7 @@ var lonlat;
 var clickImg = false;
 var clickMap = false;
 
-var urlImage = 'http://eol.jsc.nasa.gov/sseop/images/ESC/small/ISS030/ISS030-E-67805.JPG';
+var urlImage = '';// 'http://eol.jsc.nasa.gov/sseop/images/ESC/small/ISS030/ISS030-E-67805.JPG';
 
 
 
@@ -174,7 +174,15 @@ pybossa.taskLoaded(function(task, deferred) {
         img.addClass('img-polaroid');
         task.info.image = img;
         */
-        deferred.resolve(task);
+        var img = new Image();
+
+             console.log('Loading image ' + task.info.link_big);
+             urlImage = task.info.link_big;
+             unloadISSImage();
+             loadISSImage();
+
+
+        deferred.resolve(task);        
         task.answer = {
             
             'XY': '',
@@ -204,6 +212,9 @@ pybossa.presentTask(function(task, deferred) {
 
             var answer = $(evt.target).attr("value");
 
+
+            getIimDim(task.info.link_big);
+
             if (typeof answer != 'undefined') {
 
               if (answer == 'save'){
@@ -215,8 +226,6 @@ pybossa.presentTask(function(task, deferred) {
                 task.answer.LONLAT = readAllValues(document.dataList.lonlatValues);
                 xy = '';
                 lonlat = '';
-
-                console.log("saving....."+task.answer.XY);
                 
                 // para probar solo hasta que quiera grabar
                 $("#step1").show();
@@ -233,6 +242,7 @@ pybossa.presentTask(function(task, deferred) {
 
               }else if (answer == '404'){
                 console.log('404 ');
+                unloadISSImage();
                 deferred.resolve(task);
               }else {
                 console.log('no foto');
@@ -281,53 +291,59 @@ var pixelProjection = new ol.proj.Projection({
   extent: [0, 0, 640, 426] // dimensiones de la imagen
 });
 
+var map;
+var ISSlayer;
+function loadISSImage(){
 
-var map = new ol.Map({
-
-  interactions: ol.interaction.defaults().extend([
-    new ol.interaction.DragRotateAndZoom()
-  ]),
-  layers: [
-    new ol.layer.Image({
-      source: new ol.source.ImageStatic({
-        attributions: [
-          new ol.Attribution({
-            html: 'ISS - GUAIX UCM'
-          })
-        ],
-        url: urlImage,
-        imageSize: [640, 426],
-        projection: pixelProjection,
-        imageExtent: pixelProjection.getExtent()
+  ISSlayer = new ol.layer.Image({
+        source: new ol.source.ImageStatic({
+          attributions: [
+            new ol.Attribution({
+              html: 'ISS - GUAIX UCM'
+            })
+          ],
+          url: urlImage,
+          imageSize: [640, 426],
+          projection: pixelProjection,
+          imageExtent: pixelProjection.getExtent()
+        })
       })
-    }),
-    vector
-  ],
 
-  target: 'map',
+  map = new ol.Map({
 
-  view: new ol.View2D({
-    projection: pixelProjection,
-    center: ol.extent.getCenter(pixelProjection.getExtent()),
-    zoom: 2
-  })
-});
+    interactions: ol.interaction.defaults().extend([
+      new ol.interaction.DragRotateAndZoom()
+    ]),
+    layers: [
+      ISSlayer,
+      vector
+    ],
 
-map.on('click', function(evt) {
-  var coordinate = evt.coordinate;
-  var xy = ol.coordinate.toStringXY(ol.proj.transform(coordinate, pixelProjection, pixelProjection));
+    target: 'map',
 
-  if (clickImg == false){
-    addOption(document.dataList.xyValues, xy,xy);
-    //txtISS.innerHTML +=  '<code>' + xy + '<br>';
-    clickImg = true;
-    clickMap = false;
-    removeInteraction(map);
-  }
+    view: new ol.View2D({
+      projection: pixelProjection,
+      center: ol.extent.getCenter(pixelProjection.getExtent()),
+      zoom: 2
+    })
+  });
 
-  
-  
-});
+  map.on('click', function(evt) {
+    var coordinate = evt.coordinate;
+    var xy = ol.coordinate.toStringXY(ol.proj.transform(coordinate, pixelProjection, pixelProjection));
+
+    if (clickImg == false){
+      addOption(document.dataList.xyValues, xy,xy);
+      clickImg = true;
+      clickMap = false;
+      //removeInteraction(map);
+    }
+  });
+} // loadISSImage
+
+function unloadISSImage(){
+  map.removeLayer(ISSlayer);
+}
 
 var mapOSM = new ol.Map({
   target: 'mapOSM',
@@ -355,7 +371,7 @@ mapOSM.on('click', function(evt) {
     addOption(document.dataList.lonlatValues, coord,coord);
     clickMap = true;
     clickImg = false;
-    addInteraction(map);
+    //addInteraction(map);
   }
 });
 
@@ -373,7 +389,7 @@ function removeInteraction(enmapa){
     enmapa.removeInteraction(draw);
 }
 
-addInteraction(map);
+//addInteraction(map);
 
 // auxiliar functions
 
@@ -418,7 +434,7 @@ function getIimDim(urlimage){
   var dim = new Array();
   var img = new Image();
   img.onload = function() {
-    console.log(this.width + 'x' + this.height);
+
     dim[0] = this.width;
     dim[1] = this.height;
     console.log(dim[0]+' '+dim[1]);

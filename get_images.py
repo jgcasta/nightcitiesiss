@@ -45,6 +45,8 @@ def get_iss_photos():
             mission,
             mission,
             idIss)
+        print pattern_b
+
         link = "http://eol.jsc.nasa.gov/scripts/sseop/photo.pl?mission=%s&roll=E&frame=%s" % (
             mission,
             idIss)
@@ -67,4 +69,4 @@ def get_iss_photos():
         photos.append(tmp)
     return photos
 
-#print get_iss_photos()
+#get_iss_photos()
