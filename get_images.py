@@ -34,7 +34,7 @@ def get_iss_photos():
         tmpMission=i['ISS-ID'].split('-E-')
         mission = tmpMission[0]
         idIss = tmpMission[1]
-        print idIss
+        
         pattern_s = "http://eol.jsc.nasa.gov/sseop/images/ESC/%s/%s/%s-E-%s.JPG" % (
             "small",
             mission,

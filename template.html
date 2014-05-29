@@ -217,13 +217,14 @@ pybossa.presentTask(function(task, deferred) {
                 xy = '';
                 lonlat = '';
                 console.log("saving....."+document.dataList.xyValues);
+                /*
                 pybossa.saveTask(task.id, task.answer).done(function() {
                     
                   $("#step1").show();
                     
                   deferred.resolve();
                 });
-
+                */
 
               }else if (answer == '404'){
                 console.log('404 ');
