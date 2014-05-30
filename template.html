@@ -174,12 +174,6 @@ pybossa.taskLoaded(function(task, deferred) {
         img.addClass('img-polaroid');
         task.info.image = img;
         */
-        var img = new Image();
-
-             console.log('Loading image ' + task.info.link_big);
-             urlImage = task.info.link_big;
-             unloadISSImage();
-             loadISSImage();
 
 
         deferred.resolve(task);        
@@ -211,7 +205,10 @@ pybossa.presentTask(function(task, deferred) {
         $('.btn-answer').off('click').on('click', function(evt) {
 
             var answer = $(evt.target).attr("value");
-
+            console.log('Loading image ' + task.info.link_big);
+            urlImage = task.info.link_big;
+            map = null;
+            loadISSImage(urlImage);
 
             getIimDim(task.info.link_big);
 
@@ -293,7 +290,7 @@ var pixelProjection = new ol.proj.Projection({
 
 var map;
 var ISSlayer;
-function loadISSImage(){
+function loadISSImage(urlImage){
 
   ISSlayer = new ol.layer.Image({
         source: new ol.source.ImageStatic({
@@ -342,7 +339,7 @@ function loadISSImage(){
 } // loadISSImage
 
 function unloadISSImage(){
-  map.removeLayer(ISSlayer);
+  window.map.removeLayer(ISSlayer);
 }
 
 var mapOSM = new ol.Map({
