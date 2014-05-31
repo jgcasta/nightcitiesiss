@@ -72,9 +72,6 @@
                 <button class="btn btn-large btn-answer" value='unknown'>I don't know</button>
 
             </div><!-- End of DIV for the submission buttons -->
-                
-
-        
         </div><!-- End of DIV for the submission buttons -->
         
 
@@ -158,23 +155,11 @@ var clickImg = false;
 var clickMap = false;
 
 var urlImage = '';// 'http://eol.jsc.nasa.gov/sseop/images/ESC/small/ISS030/ISS030-E-67805.JPG';
-
-
+var urlImageFirst = 'http://eol.jsc.nasa.gov/sseop/images/ESC/small/ISS030/ISS030-E-67805.JPG';
 
 pybossa.taskLoaded(function(task, deferred) {
     if ( !$.isEmptyObject(task) ) {
         console.log('dentro de taskLoaded');
-        /*
-        var img = $('<img />');
-        img.load(function() {
-            // continue as soon as the image is loaded
-            deferred.resolve(task);
-        });
-        img.attr('src', task.info.link_big).css('width', "100%");
-        img.addClass('img-polaroid');
-        task.info.image = img;
-        */
-
 
         deferred.resolve(task);        
         task.answer = {
@@ -185,7 +170,12 @@ pybossa.taskLoaded(function(task, deferred) {
             'sharp': ''
         }
         console.log('id de la tarea ' + task.id);
+        console.log('link a la imagen ' + task.info.link_big);
+        console.log('Localicacion de la image ' + task.info.citylon + ' ' + task.info.citylat);
 
+        //TODO Aqui poner el centrado del mapa OSM en el de la imagen task.info.citylon + ' ' + task.info.citylat
+
+        
     }
     else {
         deferred.resolve(task);
@@ -239,7 +229,7 @@ pybossa.presentTask(function(task, deferred) {
 
               }else if (answer == '404'){
                 console.log('404 ');
-                unloadISSImage();
+                loadNewISSImage(urlImage);
                 deferred.resolve(task);
               }else {
                 console.log('no foto');
@@ -288,11 +278,19 @@ var pixelProjection = new ol.proj.Projection({
   extent: [0, 0, 640, 426] // dimensiones de la imagen
 });
 
+// loading OSMmap first time
+console.log('Loading mapOSM');
+loadOSM(-3,40,5);
+
+// loading ISSimage first time
+console.log('Loading mapISS');
+loadISSImage(urlImageFirst);
+
 var map;
 var ISSlayer;
-function loadISSImage(urlImage){
 
-  ISSlayer = new ol.layer.Image({
+function createISSLayer(urlImage){
+    ISSlayer = new ol.layer.Image({
         source: new ol.source.ImageStatic({
           attributions: [
             new ol.Attribution({
@@ -304,7 +302,12 @@ function loadISSImage(urlImage){
           projection: pixelProjection,
           imageExtent: pixelProjection.getExtent()
         })
-      })
+      });
+}
+
+function loadISSImage(urlImage){
+
+  createISSLayer(urlImageFirst);
 
   map = new ol.Map({
 
@@ -342,35 +345,51 @@ function unloadISSImage(){
   window.map.removeLayer(ISSlayer);
 }
 
-var mapOSM = new ol.Map({
-  target: 'mapOSM',
-  layers: [
-    new ol.layer.Tile({
-      source: new ol.source.OSM()
-    })
-  ],
-  //renderer: exampleNS.getRendererFromQueryString(),
-  //overlays: [overlay],
-  view: new ol.View2D({
-    center: ol.proj.transform([-3, 40], 'EPSG:4326', 'EPSG:3857'), // poner aqui las coordenadas del centro del mapa
-    zoom: 6
-  })
-});
+function loadNewISSImage(urlImage){
+  createISSLayer(urlImage);
+  map.addLayer(ISSlayer);
+}
 
-mapOSM.on('click', function(evt) {
-  var coordinate = evt.coordinate;
-  var hdms = ol.coordinate.toStringHDMS(ol.proj.transform(
-      coordinate, 'EPSG:3857', 'EPSG:4326'));
 
-   if (clickMap == false){
-    //txtOSM.innerHTML += '<code>' +  ol.coordinate.toStringXY(ol.proj.transform(coordinate, 'EPSG:3857', 'EPSG:4326'),6) + '<br>';
-    var coord = ol.coordinate.toStringXY(ol.proj.transform(coordinate, 'EPSG:3857', 'EPSG:4326'),6);
-    addOption(document.dataList.lonlatValues, coord,coord);
-    clickMap = true;
-    clickImg = false;
-    //addInteraction(map);
-  }
-});
+
+var mapOSM;
+
+function loadOSM(lonOSM, latOSM, zoomOSM){
+    mapOSM = new ol.Map({
+      target: 'mapOSM',
+      layers: [
+        new ol.layer.Tile({
+          source: new ol.source.OSM()
+        })
+      ],
+      //renderer: exampleNS.getRendererFromQueryString(),
+      //overlays: [overlay],
+      view: new ol.View2D({
+        center: ol.proj.transform([lonOSM, latOSM], 'EPSG:4326', 'EPSG:3857'), // poner aqui las coordenadas del centro del mapa
+        zoom: zoomOSM
+      })
+    });
+
+    mapOSM.on('click', function(evt) {
+      var coordinate = evt.coordinate;
+      var hdms = ol.coordinate.toStringHDMS(ol.proj.transform(
+          coordinate, 'EPSG:3857', 'EPSG:4326'));
+
+       if (clickMap == false){
+        //txtOSM.innerHTML += '<code>' +  ol.coordinate.toStringXY(ol.proj.transform(coordinate, 'EPSG:3857', 'EPSG:4326'),6) + '<br>';
+        var coord = ol.coordinate.toStringXY(ol.proj.transform(coordinate, 'EPSG:3857', 'EPSG:4326'),6);
+        addOption(document.dataList.lonlatValues, coord,coord);
+        clickMap = true;
+        clickImg = false;
+        //addInteraction(map);
+      }
+    });
+
+}
+
+function changeMapOSM(lonOSM, latOSM, zoomOSM){
+  mapOSM.getMap().getView().getView2D().setCenter(lonOSM,latOSM);
+}
 
 
 var draw; 

@@ -45,28 +45,27 @@ def get_iss_photos():
             mission,
             mission,
             idIss)
-        print pattern_b
 
         link = "http://eol.jsc.nasa.gov/scripts/sseop/photo.pl?mission=%s&roll=E&frame=%s" % (
             mission,
             idIss)
         idISS = idIss
 
-        nadirLon = str(i.citylon2)
+        citylon2 = str(i['citylon2'])
 
-        nadirLat = str(i.citylat2)
-            
-        focal = '50'
+        citylat2 = str(i['citylat2'])
+        
+        f = '50'
         
         tmp = dict(link_small=pattern_s,
                    link_big=pattern_b,
                    link=link,
                    idISS=idISS,
-                   nadirLon=nadirLon,
-                   nadirLat=nadirLat,
-                   focal=focal
+                   citylon=citylon2,
+                   citylat=citylat2,
+                   focal=f
                    )
         photos.append(tmp)
     return photos
 
-#get_iss_photos()
+print get_iss_photos()
