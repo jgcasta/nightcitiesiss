@@ -197,8 +197,6 @@ pybossa.presentTask(function(task, deferred) {
             var answer = $(evt.target).attr("value");
             console.log('Loading image ' + task.info.link_big);
             urlImage = task.info.link_big;
-            map = null;
-            loadISSImage(urlImage);
 
             getIimDim(task.info.link_big);
 
@@ -346,6 +344,7 @@ function unloadISSImage(){
 }
 
 function loadNewISSImage(urlImage){
+  map.removeLayer(ISSlayer);
   createISSLayer(urlImage);
   map.addLayer(ISSlayer);
 }
