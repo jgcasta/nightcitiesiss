@@ -1,11 +1,3 @@
-<!--
-TODO
-
-- Incluir enlace a la pagina original de la ISS donde esta la imagen 
-- Incluir boton social
-
- -->
-
   <link href="http://www.iderail.es/testiss/css/ol.css" rel="stylesheet">
   <style type="text/css">
   .map {
@@ -156,14 +148,7 @@ function loadUserProgress() {
     });
 }
 
-var xy;
-var lonlat;
 
-var clickImg = false;
-var clickMap = false;
-
-var urlImage = '';// 'http://eol.jsc.nasa.gov/sseop/images/ESC/small/ISS030/ISS030-E-67805.JPG';
-var urlImageFirst = 'http://eol.jsc.nasa.gov/sseop/images/ESC/small/ISS030/ISS030-E-67805.JPG';
 
 pybossa.taskLoaded(function(task, deferred) {
     if ( !$.isEmptyObject(task) ) {
@@ -177,10 +162,13 @@ pybossa.taskLoaded(function(task, deferred) {
             'img_big': task.info.link_big,
             'sharp': ''
         }
-        console.log('id de la tarea ' + task.id);
-        console.log('link a la imagen ' + task.info.link_big);
-        console.log('Localicacion de la image Loaded ' + task.info.citylon + ' ' + task.info.citylat);
-        deferred.resolve(task);
+        console.log('1.- id de la tarea ' + task.id);
+        console.log('1.- link a la imagen ' + task.info.link_big);
+        console.log('1.- Localicacion de la image Loaded ' + task.info.citylon + ' ' + task.info.citylat);
+        console.log('1.- Focal ' + task.info.focal);
+        console.log('------------------------------------------');
+
+        deferred.resolve(task);        
     }
     else {
         deferred.resolve(task);
@@ -188,18 +176,16 @@ pybossa.taskLoaded(function(task, deferred) {
 });
 
 pybossa.presentTask(function(task, deferred) {
-    
+    console.log('en presentTask');
     if ( !$.isEmptyObject(task) ) {
         
         loadUserProgress();
-
         $("#question").html(task.info.question);
         $('#task-id').html(task.id);
         $('.btn-answer').off('click').on('click', function(evt) {
 
             var answer = $(evt.target).attr("value");
-            console.log('Loading image ' + task.info.link_big);
-            urlImage = task.info.link_big;
+
 
             if (typeof answer != 'undefined') {
 
@@ -208,11 +194,12 @@ pybossa.presentTask(function(task, deferred) {
                 console.log('SAVE ');
                 $("#step1").hide();
                 
-                task.answer.XY = readAllValues(document.dataList.xyValues);
-                task.answer.LONLAT = readAllValues(document.dataList.lonlatValues);
+                task.answer.XY = 'xy';
+                task.answer.LONLAT = 'lnlat';
                 xy = '';
                 lonlat = '';
-                
+                console.log('2.- id de la tarea ' + task.id);
+                console.log('2.- Localicacion de la image Loaded ' + task.info.citylon + ' ' + task.info.citylat);
                 console.log('Saved task.answer.XY ' + task.answer.XY);
                 console.log('Saved task.answer.LONLAT ' + task.answer.LONLAT);
                 console.log('Saved img_big ' + task.info.link_big);
@@ -221,14 +208,8 @@ pybossa.presentTask(function(task, deferred) {
                     deferred.resolve();
                 });
 
-                
                 $("#step1").show();
-                console.log('Localicacion de la image presentTask ' + task.info.citylon + ' ' + task.info.citylat);
-                changeMapOSM(task.info.citylon,task.info.citylat,9);
-                removeAllOptions();
-
-                // TODO Incluir zoom a la imagen en función del maximo para que ocupe todo el canvas
-                loadNewISSImage(urlImage);
+                console.log('despues del show');
 
               }else if (answer == '404'){
                 console.log('404 ');
@@ -249,194 +230,6 @@ pybossa.presentTask(function(task, deferred) {
         $("#finish").fadeIn(500);
     }
 });
-
-// funciones nuestras para localizar puntos
-var clickImg = false;
-var clickMap = false;
-
-var pixelProjection = new ol.proj.Projection({
-  code: 'pixel',
-  units: 'pixels',
-  extent: [0, 0, 640, 426] // dimensiones de la imagen
-});
-
-// loading OSMmap first time
-loadOSM(-3,40,5);
-
-// loading ISSimage first time
-loadISSImage(urlImageFirst);
-
-var map;
-var ISSlayer;
-
-function createISSLayer(urlImage){
-    ISSlayer = new ol.layer.Image({
-        source: new ol.source.ImageStatic({
-          attributions: [
-            new ol.Attribution({
-              html: 'ISS - GUAIX UCM'
-            })
-          ],
-          url: urlImage,
-          imageSize: [640, 426],
-          projection: pixelProjection,
-          imageExtent: pixelProjection.getExtent()
-        })
-      });
-}
-
-function loadISSImage(urlImage){
-
-  createISSLayer(urlImageFirst);
-
-  map = new ol.Map({
-
-    interactions: ol.interaction.defaults().extend([
-      new ol.interaction.DragRotateAndZoom()
-    ]),
-    layers: [
-      ISSlayer
-    ],
-
-    target: 'map',
-
-    view: new ol.View2D({
-      projection: pixelProjection,
-      center: ol.extent.getCenter(pixelProjection.getExtent()),
-      zoom: 2
-    })
-  });
-
-  map.on('click', function(evt) {
-    var coordinate = evt.coordinate;
-    var xy = ol.coordinate.toStringXY(ol.proj.transform(coordinate, pixelProjection, pixelProjection));
-
-    if (clickImg == false){
-      addOption(document.dataList.xyValues, xy,xy);
-      clickImg = true;
-      clickMap = false;
-
-    }
-  });
-} // loadISSImage
-
-function unloadISSImage(){
-  window.map.removeLayer(ISSlayer);
-}
-
-function loadNewISSImage(urlImage){
-  map.removeLayer(ISSlayer);
-  createISSLayer(urlImage);
-  map.addLayer(ISSlayer);
-}
-
-
-
-var mapOSM;
-
-function loadOSM(lonOSM, latOSM, zoomOSM){
-    mapOSM = new ol.Map({
-      target: 'mapOSM',
-      layers: [
-        new ol.layer.Tile({
-          source: new ol.source.OSM()
-        })
-      ],
-
-      view: new ol.View2D({
-        center: ol.proj.transform([eval(lonOSM), eval(latOSM)], 'EPSG:4326', 'EPSG:3857'), // poner aqui las coordenadas del centro del mapa
-        zoom: eval(zoomOSM)
-      })
-    });
-
-    mapOSM.on('click', function(evt) {
-      var coordinate = evt.coordinate;
-      var hdms = ol.coordinate.toStringHDMS(ol.proj.transform(
-          coordinate, 'EPSG:3857', 'EPSG:4326'));
-
-       if (clickMap == false){
-        
-        var coord = ol.coordinate.toStringXY(ol.proj.transform(coordinate, 'EPSG:3857', 'EPSG:4326'),6);
-        addOption(document.dataList.lonlatValues, coord,coord);
-        clickMap = true;
-        clickImg = false;
-        
-      }
-    });
-
-}
-
-function changeMapOSM(lonOSM, latOSM, zoomOSM){
-
-  var view= new ol.View2D({
-    center: ol.proj.transform([eval(lonOSM), eval(latOSM)], 'EPSG:4326', 'EPSG:3857'),
-    zoom: eval(zoomOSM)
-  });
-  
-  mapOSM.setView(view);
-}
-
-
-// auxiliar functions
-
-function addOption(selectbox,text,value ){
-  var optn = document.createElement("OPTION");
-  optn.text = text;
-  optn.value = value;
-  selectbox.options.add(optn);
-}
-
-function removeOptions(){
-  var i;
-    for(i=xyValues.options.length-1;i>=0;i--){
-      
-      if(xyValues.options[i].selected){
-        xyValues.remove(i);
-        lonlatValues.remove(i);
-      }
-      if(lonlatValues.options[i].selected){
-        lonlatValues.remove(i);
-        xyValues.remove(i);
-      }
-
-    }
-}
-
-function removeAllOptions(){
-    var i;
-    for(i=0;i<xyValues.options.length+2;i++){
-      xyValues.remove(i);
-      lonlatValues.remove(i);
-    }
-}
-
-function readAllValues(selectbox){
-  
-  var i;
-  var ret = new Array();
-  for(i=0;i<selectbox.options.length;i++){
-    
-    if(typeof selectbox.options[i].value != 'undefined'){
-      ret.push(selectbox.options[i].value + ';');
-    }
-  }  
-  return ret;
-}
-
-function getIimDim(urlimage){
-  var dim = new Array();
-  var img = new Image();
-  img.onload = function() {
-
-    dim[0] = this.width;
-    dim[1] = this.height;
-    console.log(dim[0]+' '+dim[1]);
-  }
-  img.src = urlimage;
-
-  
-  return dim;
-}
 
 pybossa.run('nightcitiesiss0');
 </script>

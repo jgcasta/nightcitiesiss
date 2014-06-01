@@ -140,7 +140,7 @@ def run(app_config, options):
         app = find_app_by_short_name()
         app.long_description = contents('long_description.html')
         app.info['task_presenter'] = contents('template.html')
-        #app.info['thumbnail'] = app_config['thumbnail'] Cuidado que tira el icono de la aplicacion
+        app.info['thumbnail'] = app_config['thumbnail'] #Cuidado que tira el icono de la aplicacion
         app.info['tutorial'] = contents('tutorial.html')
 
         try:
