@@ -46,7 +46,7 @@ def get_iss_photos():
             mission,
             idIss)
 
-        link = "http://eol.jsc.nasa.gov/scripts/sseop/photo.pl?mission=%s&roll=E&frame=%s" % (
+        linkData = "http://eol.jsc.nasa.gov/scripts/sseop/photo.pl?mission=%s&roll=E&frame=%s" % (
             mission,
             idIss)
         idISS = idIss
@@ -59,7 +59,7 @@ def get_iss_photos():
         
         tmp = dict(link_small=pattern_s,
                    link_big=pattern_b,
-                   link=link,
+                   linkData=linkData,
                    idISS=idISS,
                    citylon=citylon2,
                    citylat=citylat2,

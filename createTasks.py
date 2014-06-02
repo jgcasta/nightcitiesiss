@@ -15,7 +15,7 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with PyBOSSA.  If not, see <http://www.gnu.org/licenses/>.
-# By Daniel Lombraña and Alejandro Sńachez de Miguel
+# By Daniel Lombraña, Alejandro Sńachez de Miguel and José Gómez Castaño
 
 import json
 from optparse import OptionParser
@@ -157,6 +157,7 @@ def run(app_config, options):
                          idiss=photo['idISS'],
                          link_big=photo['link_big'],
                          link_small=photo['link_small'],
+                         linkData=photo['linkData'],
                          citylon=photo['citylon'],
                          citylat=photo['citylat'],
                          focal=photo['focal'])
@@ -168,9 +169,6 @@ def run(app_config, options):
             format_error("pbclient.create_task", response)
 
     def add_photo_tasks(app):
-        # First of all we get the URL photos
-        # Then, we have to create a set of tasks for the application
-        # For this, we get first the photo URLs from Flickr
         photos = get_iss_photos(                                )
         question = app_config['question']
         [create_photo_task(app, p, question, priority=random.random()) for p in photos]
