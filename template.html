@@ -211,12 +211,11 @@ pybossa.presentTask(function(task, deferred) {
         
         loadUserProgress();
 
+        // first time I load the whole map
         if (firstTime){
-            // loading OSMmap first time
             loadOSM(task.info.citylon,task.info.citylat,9);
-
-            // loading ISSimage first time
             loadISSImage(task.info.link_big);
+            firstTime = false;
         }
 
 
@@ -225,7 +224,6 @@ pybossa.presentTask(function(task, deferred) {
         $('.btn-answer').off('click').on('click', function(evt) {
 
             var answer = $(evt.target).attr("value");
-            console.log('Loading image ' + task.info.link_big);
             urlImage = task.info.link_big;
 
             if (typeof answer != 'undefined') {
@@ -239,18 +237,13 @@ pybossa.presentTask(function(task, deferred) {
                 task.answer.LONLAT = readAllValues(document.dataList.lonlatValues);
                 xy = '';
                 lonlat = '';
-                
-                console.log('Saved task.answer.XY ' + task.answer.XY);
-                console.log('Saved task.answer.LONLAT ' + task.answer.LONLAT);
-                console.log('Saved img_big ' + task.info.link_big);
 
                 pybossa.saveTask(task.id, task.answer).done(function() {
                     deferred.resolve();
                 });
 
-                
                 $("#step1").show();
-                console.log('Localicacion de la image presentTask ' + task.info.citylon + ' ' + task.info.citylat);
+
                 changeMapOSM(task.info.citylon,task.info.citylat,9);
                 removeAllOptions();
 
@@ -259,13 +252,29 @@ pybossa.presentTask(function(task, deferred) {
 
               }else if (answer == '404'){
 
-                
+                $("#step1").hide();
                 console.log('404 ');
-                deferred.resolve(task);
-              
+                $("#step1").show();
+                changeMapOSM(task.info.citylon,task.info.citylat,9);
+                
+                loadNewISSImage(urlImage);   
+                task.answer.imageResult = '404';
+                pybossa.saveTask(task.id, task.answer).done(function() {
+                    deferred.resolve();
+                });  
+                
               }else {
-                console.log('no foto');
-                deferred.resolve(task);
+                
+                $("#step1").hide();
+                console.log('unknown');
+                $("#step1").show();
+                changeMapOSM(task.info.citylon,task.info.citylat,9);
+                
+                loadNewISSImage(urlImage);   
+                task.answer.imageResult = 'unknown';
+                pybossa.saveTask(task.id, task.answer).done(function() {
+                    deferred.resolve();
+                });  
               }
 
             }
