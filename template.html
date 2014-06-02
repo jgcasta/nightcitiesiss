@@ -2,8 +2,8 @@
 TODO
 
 + Incluir enlace a la pagina original de la ISS donde esta la imagen 
-- Incluir boton social
-- Sobreescribir la clase .container para poner margenes a 10px
++ Incluir boton social
++ Sobreescribir la clase .container para poner margenes a 10px
 - Aplicar calculo del zoom en función de la focal de la imagen
 - Enlazar el ol.js desde el sitio orginal de ol3
 - Enlazar el ol.css desde el sitio original de ol3
@@ -186,7 +186,7 @@ pybossa.taskLoaded(function(task, deferred) {
 
         //deferred.resolve(task);        
         task.answer = {
-            
+            'imageResult' : '',
             'XY': '',
             'LONLAT': '',
             'img_big': task.info.link_big,
@@ -202,6 +202,7 @@ pybossa.taskLoaded(function(task, deferred) {
     else {
         deferred.resolve(task);
     }
+    updateTwitterValues(window.location.href);
 });
 
 pybossa.presentTask(function(task, deferred) {
@@ -209,6 +210,15 @@ pybossa.presentTask(function(task, deferred) {
     if ( !$.isEmptyObject(task) ) {
         
         loadUserProgress();
+
+        if (firstTime){
+            // loading OSMmap first time
+            loadOSM(task.info.citylon,task.info.citylat,9);
+
+            // loading ISSimage first time
+            loadISSImage(task.info.link_big);
+        }
+
 
         $("#question").html(task.info.question);
         $('#task-id').html(task.id);
@@ -249,7 +259,7 @@ pybossa.presentTask(function(task, deferred) {
 
               }else if (answer == '404'){
 
-                // TODO What to do when there is no photo loaded
+                
                 console.log('404 ');
                 deferred.resolve(task);
               
@@ -269,7 +279,14 @@ pybossa.presentTask(function(task, deferred) {
     }
 });
 
+function updateTwitterValues(share_url) {
+    $("#Twitter-share-section").html('&nbsp;'); 
+    $("#Twitter-share-section").html('<a href="https://twitter.com/share" class="twitter-share-button" data-url="'+share_url+'" data-text="Check out this amazing image!" data-size="large" data-hashtags="citiesAtNight">Tweet</a>');
+    twttr.widgets.load();
+}
+
 // functions to show ISS picture and OSM Map
+var firstTime = true;
 var clickImg = false;
 var clickMap = false;
 
@@ -278,13 +295,13 @@ var pixelProjection = new ol.proj.Projection({
   units: 'pixels',
   extent: [0, 0, 640, 426] 
 });
-
+/*
 // loading OSMmap first time
 loadOSM(-3,40,5);
 
 // loading ISSimage first time
 loadISSImage(urlImageFirst);
-
+*/
 var map;
 var ISSlayer;
 
