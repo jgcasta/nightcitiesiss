@@ -12,8 +12,7 @@ This application has three files:
 
 ![alt screenshot](http://i.imgur.com/QDsvRX1.png)
 
-[![ScreenShot](https://raw.github.com/GabLeRoux/WebMole/master/ressources/WebMole_Youtube_Video.png)](http://www.youtube.com/embed/TFw1G0RnbJM)
-
+[![ScreenShot](http://i.imgur.com/zdHPu0a.png)](http://www.youtube.com/embed/TFw1G0RnbJM)
 
 Testing the application
 =======================
