@@ -28,7 +28,7 @@ def get_iss_photos():
     http://eol.jsc.nasa.gov/sseop/images/ESC/small/ISS030/ISS030-E-67805.JPG
     """
     photos = []
-    lista=asciitable.read('datosISS.csv') # comprobar formato del fichero
+    lista=asciitable.read('atlasiss.csv') # comprobar formato del fichero
 
     for i in lista:
         tmpMission=i['ISS-ID'].split('-E-')
@@ -51,9 +51,9 @@ def get_iss_photos():
             idIss)
         idISS = idIss
 
-        citylon2 = str(i['citylon2'])
+        citylon = str(i['loncity'])
 
-        citylat2 = str(i['citylat2'])
+        citylat = str(i['latcity'])
         
         f = '50'
         
@@ -61,11 +61,11 @@ def get_iss_photos():
                    link_big=pattern_b,
                    linkData=linkData,
                    idISS=idISS,
-                   citylon=citylon2,
-                   citylat=citylat2,
+                   citylon=citylon,
+                   citylat=citylat,
                    focal=f
                    )
         photos.append(tmp)
     return photos
 
-#get_iss_photos()
+print get_iss_photos()
