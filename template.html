@@ -349,6 +349,7 @@ function loadISSImage(urlImage){
     if (clickImg == false){
       
       addOption(document.dataList.xyValues, xy,xy);
+
       addPointLayer();
       clickImg = true;
       clickMap = false;
@@ -395,6 +396,7 @@ function loadOSM(lonOSM, latOSM, zoomOSM){
         
         var coord = ol.coordinate.toStringXY(ol.proj.transform(coordinate, 'EPSG:3857', 'EPSG:4326'),6);
         addOption(document.dataList.lonlatValues, coord,coord);
+        
         addPointLayerOSM();
         clickMap = true;
         clickImg = false;
@@ -416,17 +418,16 @@ function changeMapOSM(lonOSM, latOSM, zoomOSM){
 
 function addPointLayer(){
 
+  window.map.removeLayer(pointLayer);
+
   var pos = [];
   var icons = [];
   
-  for(i=0;i<xyValues.options.length;i++){
+  for(i=0;i<dataList.xyValues.options.length;i++){
     
-    if(typeof xyValues.options[i].value != 'undefined'){
+    if(typeof dataList.xyValues.options[i].value != 'undefined'){
       
-      pos = xyValues.options[i].value.split(',');
-
-      console.log('lon ' + pos[0]);
-      console.log('lat ' + pos[1]);
+      pos = dataList.xyValues.options[i].value.split(',');
 
       iconFeature = new ol.Feature({ geometry: new ol.geom.Point([eval(pos[0]), eval(pos[1])])});
       iconFeature.setStyle(iconStyle);
@@ -447,17 +448,15 @@ var pointLayerOSM;
 var pointLayer;
 function addPointLayerOSM(){
 
+  window.mapOSM.removeLayer(pointLayerOSM);
   var posOSM = [];
   var iconsOSM = [];
   
-  for(i=0;i<lonlatValues.options.length;i++){
+  for(i=0;i<dataList.lonlatValues.options.length ;i++){
     
-    if(typeof lonlatValues.options[i].value != 'undefined'){
+    if(typeof dataList.lonlatValues.options[i].value != 'undefined'){
       
-      posOSM = lonlatValues.options[i].value.split(',');
-
-      console.log('lon ' + posOSM[0]);
-      console.log('lat ' + posOSM[1]);
+      posOSM = dataList.lonlatValues.options[i].value.split(',');
 
       iconFeatureOSM = new ol.Feature({ geometry: new ol.geom.Point(ol.proj.transform([eval(posOSM[0]), eval(posOSM[1])], 'EPSG:4326', 'EPSG:3857'))});
       iconFeatureOSM.setStyle(iconStyle);
@@ -478,6 +477,8 @@ function removePoint(){
   window.mapOSM.removeLayer(pointLayerOSM);
 }
 
+
+
 // auxiliar functions
 
 function addOption(selectbox,text,value ){
@@ -487,29 +488,37 @@ function addOption(selectbox,text,value ){
   selectbox.options.add(optn);
 }
 
+
 function removeOptions(){
     
+    
+
     var xyDeleted = false;
     for(var i=0; i<dataList.xyValues.options.length;i++){
       
       if(dataList.xyValues.options[i].selected){
+        window.map.removeLayer(pointLayer);
+        window.mapOSM.removeLayer(pointLayerOSM);
         dataList.xyValues.remove(i);
         dataList.lonlatValues.remove(i);
         xyDeleted = true;
+        addPointLayer();
+        addPointLayerOSM();
       }
-      if( !xyDeleted &&dataList.lonlatValues.options[i].selected ){
+      if( !xyDeleted && dataList.lonlatValues.options[i].selected ){
+        window.mapOSM.removeLayer(pointLayerOSM);
+        window.map.removeLayer(pointLayer);
         dataList.lonlatValues.remove(i);
         dataList.xyValues.remove(i);
         xyDeleted = false;
+        addPointLayerOSM();
+        addPointLayer();
       }
     }
-
-
-    removePoint();
-    addPointLayerOSM();
-    addPointLayer();
-
-
+   
+    
+    
+    
 }
 
 function removeAllOptions(){
