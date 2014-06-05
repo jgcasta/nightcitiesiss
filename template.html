@@ -474,8 +474,8 @@ function addPointLayerOSM(){
 }
 
 function removePoint(){
-  map.removeLayer(pointLayer);
-  mapOSM.removeLayer(pointLayerOSM);
+  window.map.removeLayer(pointLayer);
+  window.mapOSM.removeLayer(pointLayerOSM);
 }
 
 // auxiliar functions
@@ -516,19 +516,9 @@ function removeAllOptions(){
 
     removePoint();
 
-    console.log("elementos en la lista " + dataList.xyValues.options.length);
-
-
     document.getElementById('xyValues').options.length = 0;
     document.getElementById('lonlatValues').options.length = 0;
 
-    /*
-    for(var ii=0; ii<dataList.xyValues.options.length + 1; ii++){
-      console.log("i " + ii);
-      dataList.xyValues.remove(ii);
-      dataList.lonlatValues.remove(ii);
-    }
-  */
 }
 
 function readAllValues(selectbox){
