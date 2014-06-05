@@ -100,7 +100,7 @@ TODO
         <div id="mapOSM" class="mapOSM"></div>
 
         <!-- DataList to save  -->
-        <form name="dataList">
+        <form id='dataList' name='dataList'>
           <input type='button'   onClick="removeOptions()"; value='Remove Selected'><br>
             <SELECT id="xyValues" NAME="xyValues" class="txtISS" MULTIPLE size=6 width=5></SELECT>
             <SELECT id="lonlatValues" NAME="lonlatValues" class="txtOSM" MULTIPLE size=6 width=7></SELECT>
@@ -238,11 +238,8 @@ pybossa.presentTask(function(task, deferred) {
                 loadNewISSImage(urlImage);
 
               }else if (answer == '404'){
-
-                $("#step1").hide();
-                console.log('404 ');
-                $("#step1").show();
-
+                removeAllOptions();
+                
                 changeMapOSM(task.info.citylon,task.info.citylat,9);
                 loadNewISSImage(urlImage);   
                 task.answer.imageResult = '404';
@@ -251,11 +248,8 @@ pybossa.presentTask(function(task, deferred) {
                 });  
                 
               }else {
+                removeAllOptions();
                 
-                $("#step1").hide();
-                console.log('unknown');
-                $("#step1").show();
-
                 changeMapOSM(task.info.citylon,task.info.citylat,9);
                 loadNewISSImage(urlImage);   
                 task.answer.imageResult = 'unknown';
@@ -355,6 +349,7 @@ function loadISSImage(urlImage){
     if (clickImg == false){
       
       addOption(document.dataList.xyValues, xy,xy);
+      addPointLayer();
       clickImg = true;
       clickMap = false;
 
@@ -400,6 +395,7 @@ function loadOSM(lonOSM, latOSM, zoomOSM){
         
         var coord = ol.coordinate.toStringXY(ol.proj.transform(coordinate, 'EPSG:3857', 'EPSG:4326'),6);
         addOption(document.dataList.lonlatValues, coord,coord);
+        addPointLayerOSM();
         clickMap = true;
         clickImg = false;
         
@@ -427,7 +423,7 @@ function addPointLayer(){
     
     if(typeof xyValues.options[i].value != 'undefined'){
       
-      pos = lonlat[i].split(',');
+      pos = xyValues.options[i].value.split(',');
 
       console.log('lon ' + pos[0]);
       console.log('lat ' + pos[1]);
@@ -445,36 +441,41 @@ function addPointLayer(){
   
   map.addLayer(pointLayer);
 
+}
 
-  // para poner puntos spbre el OSM map
-  var pos = [];
-  var icons = [];
+var pointLayerOSM;
+var pointLayer;
+function addPointLayerOSM(){
+
+  var posOSM = [];
+  var iconsOSM = [];
+  
   for(i=0;i<lonlatValues.options.length;i++){
     
     if(typeof lonlatValues.options[i].value != 'undefined'){
       
-      pos = lonlat[i].split(',');
+      posOSM = lonlatValues.options[i].value.split(',');
 
-      console.log('lon ' + pos[0]);
-      console.log('lat ' + pos[1]);
+      console.log('lon ' + posOSM[0]);
+      console.log('lat ' + posOSM[1]);
 
-      iconFeature = new ol.Feature({ geometry: new ol.geom.Point(ol.proj.transform([eval(pos[0]), eval(pos[1])], 'EPSG:4326', 'EPSG:3857'))});
-      iconFeature.setStyle(iconStyle);
-      icons.push(iconFeature);    
+      iconFeatureOSM = new ol.Feature({ geometry: new ol.geom.Point(ol.proj.transform([eval(posOSM[0]), eval(posOSM[1])], 'EPSG:4326', 'EPSG:3857'))});
+      iconFeatureOSM.setStyle(iconStyle);
+      iconsOSM.push(iconFeatureOSM);    
 
     }
   }  
 
-  pointLayer = new ol.layer.Vector({ 
-    source: new ol.source.Vector({ features: icons }) 
+  pointLayerOSM = new ol.layer.Vector({ 
+    source: new ol.source.Vector({ features: iconsOSM }) 
   })
   
-  map.addLayer(pointLayer);
-
+  mapOSM.addLayer(pointLayerOSM);
 }
 
-function removePoint(capa){
-  map.removeLayer(capa);
+function removePoint(){
+  map.removeLayer(pointLayer);
+  mapOSM.removeLayer(pointLayerOSM);
 }
 
 // auxiliar functions
@@ -487,32 +488,47 @@ function addOption(selectbox,text,value ){
 }
 
 function removeOptions(){
-  
-    for(var i=0; i<xyValues.options.length;i++){
+    
+    var xyDeleted = false;
+    for(var i=0; i<dataList.xyValues.options.length;i++){
       
-      if(xyValues.options[i].selected){
-        xyValues.remove(i);
-        lonlatValues.remove(i);
+      if(dataList.xyValues.options[i].selected){
+        dataList.xyValues.remove(i);
+        dataList.lonlatValues.remove(i);
+        xyDeleted = true;
       }
-      if(lonlatValues.options[i].selected){
-        lonlatValues.remove(i);
-        xyValues.remove(i);
+      if( !xyDeleted &&dataList.lonlatValues.options[i].selected ){
+        dataList.lonlatValues.remove(i);
+        dataList.xyValues.remove(i);
+        xyDeleted = false;
       }
     }
 
-    // deleting all vector points
-    //removePoint(pointLayer);
 
-    // drawing the points again in both, ISS image and OSMmap
-    //addPointLayer();
+    removePoint();
+    addPointLayerOSM();
+    addPointLayer();
+
+
 }
 
 function removeAllOptions(){
-    
-    for(var i=0; i<xyValues.options.length; i++){
-      xyValues.remove(i);
-      lonlatValues.remove(i);
+
+    removePoint();
+
+    console.log("elementos en la lista " + dataList.xyValues.options.length);
+
+
+    document.getElementById('xyValues').options.length = 0;
+    document.getElementById('lonlatValues').options.length = 0;
+
+    /*
+    for(var ii=0; ii<dataList.xyValues.options.length + 1; ii++){
+      console.log("i " + ii);
+      dataList.xyValues.remove(ii);
+      dataList.lonlatValues.remove(ii);
     }
+  */
 }
 
 function readAllValues(selectbox){
