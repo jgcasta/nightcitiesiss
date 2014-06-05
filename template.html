@@ -8,7 +8,7 @@ TODO
 5 - Enlazar el ol.js desde el sitio orginal de ol3
 6 - Enlazar el ol.css desde el sitio original de ol3
 7 - Gestionar capa WMS del VIIRS
-8 - 
+8 - Gestionar colocacion de puntos en la imagen ISS -> ***** VERIFICAR *****
 9 - Comprobar borrado de las listas cuando se cambia de tarea
 10 + Poner enlace en el attribution
 
@@ -101,7 +101,7 @@ TODO
 
         <!-- DataList to save  -->
         <form name="dataList">
-          <input type=button  class="btn btn-large btn-answer" onClick="removeOptions()"; value='Remove Selected'><br>
+          <input type='button'   onClick="removeOptions()"; value='Remove Selected'><br>
             <SELECT id="xyValues" NAME="xyValues" class="txtISS" MULTIPLE size=6 width=5></SELECT>
             <SELECT id="lonlatValues" NAME="lonlatValues" class="txtOSM" MULTIPLE size=6 width=7></SELECT>
         </form>
@@ -292,6 +292,23 @@ var pixelProjection = new ol.proj.Projection({
   extent: [0, 0, 5000, 5000] 
 });
 
+
+var iconStyle = new ol.style.Style({
+  image: new ol.style.Circle({
+      radius: 3,
+      fill: new ol.style.Fill({
+          color: [255, 204, 102, 1]
+      }),
+      stroke: new ol.style.Stroke({
+          color: [255, 204, 102, 1],
+          width: 1.5
+      })
+  }),
+  zIndex: 1
+});
+
+var iconFeature;
+
 var map;
 var ISSlayer;
 
@@ -401,6 +418,64 @@ function changeMapOSM(lonOSM, latOSM, zoomOSM){
   mapOSM.setView(view);
 }
 
+function addPointLayer(){
+
+  var pos = [];
+  var icons = [];
+  
+  for(i=0;i<xyValues.options.length;i++){
+    
+    if(typeof xyValues.options[i].value != 'undefined'){
+      
+      pos = lonlat[i].split(',');
+
+      console.log('lon ' + pos[0]);
+      console.log('lat ' + pos[1]);
+
+      iconFeature = new ol.Feature({ geometry: new ol.geom.Point([eval(pos[0]), eval(pos[1])])});
+      iconFeature.setStyle(iconStyle);
+      icons.push(iconFeature);    
+
+    }
+  }  
+
+  pointLayer = new ol.layer.Vector({ 
+    source: new ol.source.Vector({ features: icons }) 
+  })
+  
+  map.addLayer(pointLayer);
+
+
+  // para poner puntos spbre el OSM map
+  var pos = [];
+  var icons = [];
+  for(i=0;i<lonlatValues.options.length;i++){
+    
+    if(typeof lonlatValues.options[i].value != 'undefined'){
+      
+      pos = lonlat[i].split(',');
+
+      console.log('lon ' + pos[0]);
+      console.log('lat ' + pos[1]);
+
+      iconFeature = new ol.Feature({ geometry: new ol.geom.Point(ol.proj.transform([eval(pos[0]), eval(pos[1])], 'EPSG:4326', 'EPSG:3857'))});
+      iconFeature.setStyle(iconStyle);
+      icons.push(iconFeature);    
+
+    }
+  }  
+
+  pointLayer = new ol.layer.Vector({ 
+    source: new ol.source.Vector({ features: icons }) 
+  })
+  
+  map.addLayer(pointLayer);
+
+}
+
+function removePoint(capa){
+  map.removeLayer(capa);
+}
 
 // auxiliar functions
 
@@ -412,8 +487,8 @@ function addOption(selectbox,text,value ){
 }
 
 function removeOptions(){
-  var i;
-    for(i=xyValues.options.length-1;i>=0;i--){
+  
+    for(var i=0; i<xyValues.options.length;i++){
       
       if(xyValues.options[i].selected){
         xyValues.remove(i);
@@ -423,13 +498,18 @@ function removeOptions(){
         lonlatValues.remove(i);
         xyValues.remove(i);
       }
-
     }
+
+    // deleting all vector points
+    //removePoint(pointLayer);
+
+    // drawing the points again in both, ISS image and OSMmap
+    //addPointLayer();
 }
 
 function removeAllOptions(){
-    var i;
-    for(i=0;i<xyValues.options.length+2;i++){
+    
+    for(var i=0; i<xyValues.options.length; i++){
       xyValues.remove(i);
       lonlatValues.remove(i);
     }
