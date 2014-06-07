@@ -73,12 +73,46 @@
 
         <!-- Link to picture data provided by NASA site -->
         <div>Use de [+] and [-] buttons to Zoom In and Zoom Out. Press Shift + Left Mouse Button to rotate the image <br><a id="hrefPicture" href='' target='_blank'>ISS picture data - Earth Science and Remote Sensing Unit, NASA-Johnson Space Center. "The Gateway to Astronaut Photography of Earth."</a></div>
+          
+
+
+        <!-- Social buttons -->
+        <div>
           <div id="Twitter-share-section" style='float: left'>
                     <a href="https://twitter.com/share" class="twitter-share-button" data-text="Check this amazing picture and help us to georreference it" data-size="large" data-hashtags="NightCitiesISS">Tweet</a>
                 </div>
                 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
           </div> <!-- end twitter -->
-        
+                  <!-- Inserta esta etiqueta donde quieras que aparezca Botón +1. -->
+          <div class="g-plusone" style="float:left" data-annotation="inline" data-width="300"></div>
+
+          <!-- Inserta esta etiqueta después de la última etiqueta de Botón +1. -->
+          <script type="text/javascript">
+            window.___gcfg = {lang: 'es'};
+
+            (function() {
+              var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+              po.src = 'https://apis.google.com/js/platform.js';
+              var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+            })();
+          </script>
+          <div style="float:left"> 
+          <div id="fb-like" class="fb-like"  data-href="http://www.cowdcrafting.org/app/nightcitiesiss" data-layout="standard" data-action="like" data-show-faces="true" data-share="true"></div>
+            <div id="fb-root"></div>
+          </div>
+          <script>(function(d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = "//connect.facebook.net/es_ES/sdk.js#xfbml=1&version=v2.0";
+            fjs.parentNode.insertBefore(js, fjs);
+          }(document, 'script', 'facebook-jssdk'));</script>
+          </div>
+          <!-- End social buttons -->
+
+
+
+
         <!-- These are maps -->
         <div id="map" class="map"></div>
         <div id="mapOSM" class="mapOSM"></div>
@@ -195,6 +229,7 @@ pybossa.presentTask(function(task, deferred) {
         $('#task-id').html(task.id);
         $('.btn-answer').off('click').on('click', function(evt) {
         $("#hrefPicture").attr("href",task.info.linkData);
+        $("#fb-like").attr("data-href",task.info.linkData);
 
             var answer = $(evt.target).attr("value");
             urlImage = task.info.link_big;
