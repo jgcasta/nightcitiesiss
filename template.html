@@ -76,6 +76,28 @@
           
 
 
+
+
+
+
+
+        <!-- These are maps -->
+        <div id="map" class="map"></div>
+        <div id="mapOSM" class="mapOSM"></div>
+
+        <!-- DataList to save  -->
+        <form id='dataList' name='dataList'>
+          <input type='button'   onClick="removeOptions()"; value='Remove Selected'><br>
+            <SELECT id="xyValues" NAME="xyValues" class="txtISS" MULTIPLE size=6 width=5></SELECT>
+            <SELECT id="lonlatValues" NAME="lonlatValues" class="txtOSM" MULTIPLE size=6 width=7></SELECT>
+        </form>
+    </div><!-- End of DIV for the submission buttons -->
+
+
+
+
+
+
         <!-- Social buttons -->
         <div>
           <div id="Twitter-share-section" style='float: left'>
@@ -113,17 +135,9 @@
 
 
 
-        <!-- These are maps -->
-        <div id="map" class="map"></div>
-        <div id="mapOSM" class="mapOSM"></div>
 
-        <!-- DataList to save  -->
-        <form id='dataList' name='dataList'>
-          <input type='button'   onClick="removeOptions()"; value='Remove Selected'><br>
-            <SELECT id="xyValues" NAME="xyValues" class="txtISS" MULTIPLE size=6 width=5></SELECT>
-            <SELECT id="lonlatValues" NAME="lonlatValues" class="txtOSM" MULTIPLE size=6 width=7></SELECT>
-        </form>
-    </div><!-- End of DIV for the submission buttons -->
+
+
 </div><!-- End of DIV for the submission buttons -->
 
 
@@ -299,11 +313,7 @@ var firstTime = true;
 var clickImg = false;
 var clickMap = false;
 
-var pixelProjection = new ol.proj.Projection({
-  code: 'pixel',
-  units: 'pixels',
-  extent: [0, 0, 5000, 5000] 
-});
+var pixelProjection;
 
 
 var iconStyle = new ol.style.Style({
@@ -325,20 +335,15 @@ var iconFeature;
 var map;
 var ISSlayer;
 
-function createISSLayer(urlImage){
+function createISSLayer(urlImage, imgX, imgY){
 
-    // image dimensions
-    var dim = new Array();
-    var img = new Image();
-    img.onload = function() {
+     pixelProjection = new ol.proj.Projection({
+      code: 'pixel',
+      units: 'pixels',
+      extent: [0, 0, eval(imgX), eval(imgY)] 
 
-      dim[0] = this.width;
-      dim[1] = this.height;
-      console.log(dim[0]+' '+dim[1]);
-    }
-    img.src = urlImage;
-
-
+    });;
+console.log('En capa' + eval(imgX) + " " + eval(imgY));
     ISSlayer = new ol.layer.Image({
         source: new ol.source.ImageStatic({
           attributions: [
@@ -347,16 +352,32 @@ function createISSLayer(urlImage){
             })
           ],
           url: urlImage,
-          imageSize: [5000, 5000],
+          imageSize: [eval(imgX), eval(imgY)],
           projection: pixelProjection,
           imageExtent: pixelProjection.getExtent()
         })
       });
 }
 
+var dimX,dimY;
+
 function loadISSImage(urlImage){
 
-  createISSLayer(urlImage); 
+  var dim = new Array();
+  var img = new Image();
+  img.onload = function() {
+    console.log('1- ' + new Date().getTime());
+    dim[0] = this.width;
+    dim[1] = this.height;
+    console.log(dim[0]+' '+dim[1]);
+    dimX = dim[0];
+    dimY = dim[1];
+  //}
+  img.src = urlImage;
+  console.log('2- ' + new Date().getTime());
+
+
+  createISSLayer(urlImage, dimX, dimY); 
   
   map = new ol.Map({
 
@@ -388,6 +409,8 @@ function loadISSImage(urlImage){
 
     }
   });
+  } // de la lectura de la imagen
+  console.log('fuera');
 } // loadISSImage
 
 function unloadISSImage(){
