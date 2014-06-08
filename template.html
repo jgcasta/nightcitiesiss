@@ -354,10 +354,10 @@ function loadISSImage(urlImage){
   var dim = new Array();
   var img = new Image();
   img.onload = function() {
-      console.log('1- ' + new Date().getTime());
+      
       dim[0] = this.width;
       dim[1] = this.height;
-      console.log(dim[0]+' '+dim[1]);
+      
       dimX = dim[0];
       dimY = dim[1];
 
@@ -407,10 +407,10 @@ function loadNewISSImage(urlImage){
   var dim = new Array();
   var img = new Image();
   img.onload = function() {
-    console.log('1- ' + new Date().getTime());
+    
     dim[0] = this.width;
     dim[1] = this.height;
-    console.log(dim[0]+' '+dim[1]);
+    
     dimX = dim[0];
     dimY = dim[1];
   
