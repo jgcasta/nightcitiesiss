@@ -203,7 +203,8 @@ pybossa.taskLoaded(function(task, deferred) {
             'XY': '',
             'LONLAT': '',
             'img_big': task.info.link_big,
-            'sharp': ''
+            'dimX': '',
+            'dimY': ''
         }
 
         deferred.resolve(task);
@@ -247,6 +248,8 @@ pybossa.presentTask(function(task, deferred) {
                 task.answer.LONLAT = readAllValues(document.dataList.lonlatValues);
                 xy = '';
                 lonlat = '';
+                task.answer.dimX = dimX;
+                task.answer.dimY = dimY;
 
                 pybossa.saveTask(task.id, task.answer).done(function() {
                     deferred.resolve();
@@ -322,6 +325,7 @@ var iconFeature;
 
 var map;
 var ISSlayer;
+
 
 function createISSLayer(urlImage, imgX, imgY){
 
