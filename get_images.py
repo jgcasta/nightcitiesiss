@@ -14,6 +14,9 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with PyBOSSA.  If not, see <http://www.gnu.org/licenses/>.
+'''
+    Modified to get informtation about ISS pictures metadada
+'''
 
 import json
 import asciitable
@@ -28,44 +31,53 @@ def get_iss_photos():
     http://eol.jsc.nasa.gov/sseop/images/ESC/small/ISS030/ISS030-E-67805.JPG
     """
     photos = []
-    lista=asciitable.read('atlasiss.csv') # comprobar formato del fichero
+    lista=asciitable.read('atlasiss.csv') 
 
     for i in lista:
-        tmpMission=i['ISS-ID'].split('-E-')
-        mission = tmpMission[0]
-        idIss = tmpMission[1]
-        
-        pattern_s = "http://eol.jsc.nasa.gov/sseop/images/ESC/%s/%s/%s-E-%s.JPG" % (
-            "small",
-            mission,
-            mission,
-            idIss)
-        pattern_b = "http://eol.jsc.nasa.gov/sseop/images/ESC/%s/%s/%s-E-%s.JPG" % (
-            'large',
-            mission,
-            mission,
-            idIss)
 
-        linkData = "http://eol.jsc.nasa.gov/scripts/sseop/photo.pl?mission=%s&roll=E&frame=%s" % (
-            mission,
-            idIss)
-        idISS = idIss
+        CoordFLAG = i['CoordFLAG']
+    
+        # only for CoordFLAG selected
 
-        citylon = str(i['loncity'])
+        if str(CoordFLAG) == '5.0':
+            tmpMission=i['ISS-ID'].split('-E-')
+            mission = tmpMission[0]
+            idIss = tmpMission[1]
+ 
+            city = i['City']
+            
+            pattern_s = "http://eol.jsc.nasa.gov/sseop/images/ESC/%s/%s/%s-E-%s.JPG" % (
+                "small",
+                mission,
+                mission,
+                idIss)
+            pattern_b = "http://eol.jsc.nasa.gov/sseop/images/ESC/%s/%s/%s-E-%s.JPG" % (
+                'large',
+                mission,
+                mission,
+                idIss)
 
-        citylat = str(i['latcity'])
-        
-        f = '50'
-        
-        tmp = dict(link_small=pattern_s,
-                   link_big=pattern_b,
-                   linkData=linkData,
-                   idISS=idISS,
-                   citylon=citylon,
-                   citylat=citylat,
-                   focal=f
-                   )
-        photos.append(tmp)
+            linkData = "http://eol.jsc.nasa.gov/scripts/sseop/photo.pl?mission=%s&roll=E&frame=%s" % (
+                mission,
+                idIss)
+            idISS = idIss
+
+            citylon = str(i['loncity'])
+            
+
+            citylat = str(i['latcity'])
+            
+            f = '50'
+            
+            tmp = dict(link_small=pattern_s,
+                       link_big=pattern_b,
+                       linkData=linkData,
+                       idISS=idISS,
+                       citylon=citylon,
+                       citylat=citylat,
+                       focal=f
+                       )
+            photos.append(tmp)
     return photos
 
 get_iss_photos()
