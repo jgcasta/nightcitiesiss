@@ -24,13 +24,14 @@ import asciitable
 
 def get_iss_photos():
     """
-    Gets public photos from ISS missions
+    Gets public metadata from ISS picture missions
     :arg string size: Size of the image from ISS mission
-    :returns: A list of photos.
+    :returns: A list of metadata photos.
     :rtype: list
-    http://eol.jsc.nasa.gov/sseop/images/ESC/small/ISS030/ISS030-E-67805.JPG
+    
     """
     photos = []
+
     lista=asciitable.read('demo.csv') 
 
     for i in lista:

@@ -56,6 +56,8 @@ We apreciate your job very much
 LICENSE
 =======
 
-This application has CreativeCommnons cc-by license
+Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0 Internacional License
+[![ScreenShot](http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png)]
+
 
 

@@ -1,19 +1,3 @@
-<!--
-TODO
-
-1 + Incluir enlace a la pagina original de la ISS donde esta la imagen 
-2 + Incluir boton social
-3 + Sobreescribir la clase .container para poner margenes a 10px
-4 + Aplicar calculo del zoom en función de la focal de la imagen ??
-5 - Enlazar el ol.js desde el sitio orginal de ol3
-6 - Enlazar el ol.css desde el sitio original de ol3
-7 - Gestionar capa WMS del VIIRS
-8 - 
-9 - Comprobar borrado de las listas cuando se cambia de tarea
-10 + Poner enlace en el attribution
-
- -->
-
   <link href="http://www.iderail.es/testiss/css/ol.css" rel="stylesheet">
   <style type="text/css">
   .map {
@@ -88,24 +72,60 @@ TODO
         </div><!-- End of DIV for the submission buttons -->
 
         <!-- Link to picture data provided by NASA site -->
-        <div><a id="hrefPicture" href='' target='_blank'>ISS picture data</a></div>
-          <div id="Twitter-share-section" style='float: left'>
-                    <a href="https://twitter.com/share" class="twitter-share-button" data-text="Check this amazing picture and help us to georreference it" data-size="large" data-hashtags="NightCitiesISS">Tweet</a>
-                </div>
-                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-          </div> <!-- end twitter -->
-        
+        <div>Use de [+] and [-] buttons to Zoom In and Zoom Out. Press Shift + Left Mouse Button to rotate the image <br><a id="hrefPicture" href='' target='_blank'>ISS picture data - Earth Science and Remote Sensing Unit, NASA-Johnson Space Center. "The Gateway to Astronaut Photography of Earth."</a></div>
+          
+
+
+
+
+
+
+
         <!-- These are maps -->
         <div id="map" class="map"></div>
         <div id="mapOSM" class="mapOSM"></div>
 
         <!-- DataList to save  -->
-        <form name="dataList">
-          <input type=button  class="btn btn-large btn-answer" onClick="removeOptions()"; value='Remove Selected'><br>
+        <form id='dataList' name='dataList'>
+          <input type='button'   onClick="removeOptions()"; value='Remove Selected'><br>
             <SELECT id="xyValues" NAME="xyValues" class="txtISS" MULTIPLE size=6 width=5></SELECT>
             <SELECT id="lonlatValues" NAME="lonlatValues" class="txtOSM" MULTIPLE size=6 width=7></SELECT>
         </form>
     </div><!-- End of DIV for the submission buttons -->
+
+        <!-- -------------- Social buttons ------------- -->
+        <div>
+          <div id="Twitter-share-section" style='float: left'>
+                    <a href="https://twitter.com/share" class="twitter-share-button" data-text="Check this amazing picture and help us to georreference it" data-size="large" data-hashtags="NightCitiesISS">Tweet</a>
+                </div>
+                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+          </div> <!-- end twitter -->
+                  
+          <div class="g-plusone" style="float:left" data-annotation="inline" data-width="300"></div>
+
+          <script type="text/javascript">
+            window.___gcfg = {lang: 'es'};
+
+            (function() {
+              var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+              po.src = 'https://apis.google.com/js/platform.js';
+              var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+            })();
+          </script>
+          <div style="float:left"> 
+          <div id="fb-like" class="fb-like"  data-href="http://www.cowdcrafting.org/app/nightcitiesiss" data-layout="standard" data-action="like" data-show-faces="true" data-share="true"></div>
+            <div id="fb-root"></div>
+          </div>
+          <script>(function(d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = "//connect.facebook.net/es_ES/sdk.js#xfbml=1&version=v2.0";
+            fjs.parentNode.insertBefore(js, fjs);
+          }(document, 'script', 'facebook-jssdk'));</script>
+          </div>
+          <!-- -------------- End social buttons -------------------- -->
+
 </div><!-- End of DIV for the submission buttons -->
 
 
@@ -114,7 +134,7 @@ TODO
         <p>You are working now on task: <span id="task-id" class="label label-warning">#</span></p>
         <p>You have completed: <span id="done" class="label label-info"></span> tasks from
         <!-- Progress bar for the user -->
-        <span id="total" class="label label-inverse"></span></p>
+        <span id="total" class="label label-info"></span></p>
         <div class="progress progress-striped">
             <div id="progress" rel="tooltip" title="#" class="bar" style="width: 0%;"></div>
         </div>
@@ -183,7 +203,8 @@ pybossa.taskLoaded(function(task, deferred) {
             'XY': '',
             'LONLAT': '',
             'img_big': task.info.link_big,
-            'sharp': ''
+            'dimX': '',
+            'dimY': ''
         }
 
         deferred.resolve(task);
@@ -211,6 +232,7 @@ pybossa.presentTask(function(task, deferred) {
         $('#task-id').html(task.id);
         $('.btn-answer').off('click').on('click', function(evt) {
         $("#hrefPicture").attr("href",task.info.linkData);
+        $("#fb-like").attr("data-href",task.info.linkData);
 
             var answer = $(evt.target).attr("value");
             urlImage = task.info.link_big;
@@ -226,6 +248,8 @@ pybossa.presentTask(function(task, deferred) {
                 task.answer.LONLAT = readAllValues(document.dataList.lonlatValues);
                 xy = '';
                 lonlat = '';
+                task.answer.dimX = dimX;
+                task.answer.dimY = dimY;
 
                 pybossa.saveTask(task.id, task.answer).done(function() {
                     deferred.resolve();
@@ -238,11 +262,8 @@ pybossa.presentTask(function(task, deferred) {
                 loadNewISSImage(urlImage);
 
               }else if (answer == '404'){
-
-                $("#step1").hide();
-                console.log('404 ');
-                $("#step1").show();
-
+                removeAllOptions();
+                
                 changeMapOSM(task.info.citylon,task.info.citylat,9);
                 loadNewISSImage(urlImage);   
                 task.answer.imageResult = '404';
@@ -251,11 +272,8 @@ pybossa.presentTask(function(task, deferred) {
                 });  
                 
               }else {
+                removeAllOptions();
                 
-                $("#step1").hide();
-                console.log('unknown');
-                $("#step1").show();
-
                 changeMapOSM(task.info.citylon,task.info.citylat,9);
                 loadNewISSImage(urlImage);   
                 task.answer.imageResult = 'unknown';
@@ -286,63 +304,102 @@ var firstTime = true;
 var clickImg = false;
 var clickMap = false;
 
-var pixelProjection = new ol.proj.Projection({
-  code: 'pixel',
-  units: 'pixels',
-  extent: [0, 0, 5000, 5000] 
+var pixelProjection;
+
+
+var iconStyle = new ol.style.Style({
+  image: new ol.style.Circle({
+      radius: 3,
+      fill: new ol.style.Fill({
+          color: [255, 204, 102, 1]
+      }),
+      stroke: new ol.style.Stroke({
+          color: [255, 204, 102, 1],
+          width: 1.5
+      })
+  }),
+  zIndex: 1
 });
+
+var iconFeature;
 
 var map;
 var ISSlayer;
 
-function createISSLayer(urlImage){
+
+function createISSLayer(urlImage, imgX, imgY){
+
+     pixelProjection = new ol.proj.Projection({
+      code: 'pixel',
+      units: 'pixels',
+      extent: [0, 0, eval(imgX), eval(imgY)] 
+
+    });;
+
     ISSlayer = new ol.layer.Image({
         source: new ol.source.ImageStatic({
           attributions: [
             new ol.Attribution({
-              html: '<a href="http://guaix.fis.ucm.es/DarkSkies">ISS - GUAIX UCM</a>' // [10]
+              html: '<a href="http://guaix.fis.ucm.es/DarkSkies">ISS - GUAIX UCM</a>'
             })
           ],
           url: urlImage,
-          imageSize: [5000, 5000],
+          imageSize: [eval(imgX), eval(imgY)],
           projection: pixelProjection,
           imageExtent: pixelProjection.getExtent()
         })
       });
 }
 
+var dimX,dimY;
+
 function loadISSImage(urlImage){
 
-  createISSLayer(urlImage); 
-  
-  map = new ol.Map({
-
-    interactions: ol.interaction.defaults().extend([
-      new ol.interaction.DragRotateAndZoom()
-    ]),
-    layers: [ISSlayer],
-
-    target: 'map',
-
-    view: new ol.View2D({
-      projection: pixelProjection,
-      center: ol.extent.getCenter(pixelProjection.getExtent()),
-      zoom: 1
-    })
-  });
-
-  map.on('click', function(evt) {
-    var coordinate = evt.coordinate;
-    var xy = ol.coordinate.toStringXY(ol.proj.transform(coordinate, pixelProjection, pixelProjection));
-
-    if (clickImg == false){
+  var dim = new Array();
+  var img = new Image();
+  img.onload = function() {
       
-      addOption(document.dataList.xyValues, xy,xy);
-      clickImg = true;
-      clickMap = false;
+      dim[0] = this.width;
+      dim[1] = this.height;
+      
+      dimX = dim[0];
+      dimY = dim[1];
 
-    }
-  });
+      createISSLayer(urlImage, dimX, dimY); 
+      
+      map = new ol.Map({
+
+        interactions: ol.interaction.defaults().extend([
+          new ol.interaction.DragRotateAndZoom()
+        ]),
+        layers: [ISSlayer],
+
+        target: 'map',
+
+        view: new ol.View2D({
+          projection: pixelProjection,
+          center: ol.extent.getCenter(pixelProjection.getExtent()),
+          zoom: 1
+        })
+      });
+
+      map.on('click', function(evt) {
+        var coordinate = evt.coordinate;
+        var xy = ol.coordinate.toStringXY(ol.proj.transform(coordinate, pixelProjection, pixelProjection));
+
+        if (clickImg == false){
+          
+          addOption(document.dataList.xyValues, xy,xy);
+
+          addPointLayer();
+          clickImg = true;
+          clickMap = false;
+
+        }
+      });
+  } // img.load
+  img.src = urlImage;
+  
 } // loadISSImage
 
 function unloadISSImage(){
@@ -350,9 +407,23 @@ function unloadISSImage(){
 }
 
 function loadNewISSImage(urlImage){
-  map.removeLayer(ISSlayer);
-  createISSLayer(urlImage);
-  map.addLayer(ISSlayer);
+
+  var dim = new Array();
+  var img = new Image();
+  img.onload = function() {
+    
+    dim[0] = this.width;
+    dim[1] = this.height;
+    
+    dimX = dim[0];
+    dimY = dim[1];
+  
+    map.removeLayer(ISSlayer);
+    createISSLayer(urlImage, dimX, dimY); 
+    map.addLayer(ISSlayer);
+
+  } // img.load
+  img.src = urlImage;
 }
 
 
@@ -383,6 +454,8 @@ function loadOSM(lonOSM, latOSM, zoomOSM){
         
         var coord = ol.coordinate.toStringXY(ol.proj.transform(coordinate, 'EPSG:3857', 'EPSG:4326'),6);
         addOption(document.dataList.lonlatValues, coord,coord);
+        
+        addPointLayerOSM();
         clickMap = true;
         clickImg = false;
         
@@ -401,6 +474,68 @@ function changeMapOSM(lonOSM, latOSM, zoomOSM){
   mapOSM.setView(view);
 }
 
+function addPointLayer(){
+
+  window.map.removeLayer(pointLayer);
+
+  var pos = [];
+  var icons = [];
+  
+  for(i=0;i<dataList.xyValues.options.length;i++){
+    
+    if(typeof dataList.xyValues.options[i].value != 'undefined'){
+      
+      pos = dataList.xyValues.options[i].value.split(',');
+
+      iconFeature = new ol.Feature({ geometry: new ol.geom.Point([eval(pos[0]), eval(pos[1])])});
+      iconFeature.setStyle(iconStyle);
+      icons.push(iconFeature);    
+
+    }
+  }  
+
+  pointLayer = new ol.layer.Vector({ 
+    source: new ol.source.Vector({ features: icons }) 
+  })
+  
+  map.addLayer(pointLayer);
+
+}
+
+var pointLayerOSM;
+var pointLayer;
+function addPointLayerOSM(){
+
+  window.mapOSM.removeLayer(pointLayerOSM);
+  var posOSM = [];
+  var iconsOSM = [];
+  
+  for(i=0;i<dataList.lonlatValues.options.length ;i++){
+    
+    if(typeof dataList.lonlatValues.options[i].value != 'undefined'){
+      
+      posOSM = dataList.lonlatValues.options[i].value.split(',');
+
+      iconFeatureOSM = new ol.Feature({ geometry: new ol.geom.Point(ol.proj.transform([eval(posOSM[0]), eval(posOSM[1])], 'EPSG:4326', 'EPSG:3857'))});
+      iconFeatureOSM.setStyle(iconStyle);
+      iconsOSM.push(iconFeatureOSM);    
+
+    }
+  }  
+
+  pointLayerOSM = new ol.layer.Vector({ 
+    source: new ol.source.Vector({ features: iconsOSM }) 
+  })
+  
+  mapOSM.addLayer(pointLayerOSM);
+}
+
+function removePoint(){
+  window.map.removeLayer(pointLayer);
+  window.mapOSM.removeLayer(pointLayerOSM);
+}
+
+
 
 // auxiliar functions
 
@@ -411,28 +546,43 @@ function addOption(selectbox,text,value ){
   selectbox.options.add(optn);
 }
 
-function removeOptions(){
-  var i;
-    for(i=xyValues.options.length-1;i>=0;i--){
-      
-      if(xyValues.options[i].selected){
-        xyValues.remove(i);
-        lonlatValues.remove(i);
-      }
-      if(lonlatValues.options[i].selected){
-        lonlatValues.remove(i);
-        xyValues.remove(i);
-      }
 
+function removeOptions(){
+    
+    
+
+    var xyDeleted = false;
+    for(var i=0; i<dataList.xyValues.options.length;i++){
+      
+      if(dataList.xyValues.options[i].selected){
+        window.map.removeLayer(pointLayer);
+        window.mapOSM.removeLayer(pointLayerOSM);
+        dataList.xyValues.remove(i);
+        dataList.lonlatValues.remove(i);
+        xyDeleted = true;
+        addPointLayer();
+        addPointLayerOSM();
+      }
+      if( !xyDeleted && dataList.lonlatValues.options[i].selected ){
+        window.mapOSM.removeLayer(pointLayerOSM);
+        window.map.removeLayer(pointLayer);
+        dataList.lonlatValues.remove(i);
+        dataList.xyValues.remove(i);
+        xyDeleted = false;
+        addPointLayerOSM();
+        addPointLayer();
+      }
     }
+    
 }
 
 function removeAllOptions(){
-    var i;
-    for(i=0;i<xyValues.options.length+2;i++){
-      xyValues.remove(i);
-      lonlatValues.remove(i);
-    }
+
+    removePoint();
+
+    document.getElementById('xyValues').options.length = 0;
+    document.getElementById('lonlatValues').options.length = 0;
+
 }
 
 function readAllValues(selectbox){
