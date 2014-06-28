@@ -28,7 +28,7 @@ def get_iss_photos():
     
     """
     photos = []
-    lista=asciitable.read('atlasOfNight.csv') 
+    lista=asciitable.read('datosISS.csv') 
 
     for i in lista:
         tmpMission=i['ISS-ID'].split('-E-')
@@ -51,9 +51,9 @@ def get_iss_photos():
             idIss)
         idISS = idIss
 
-        citylon2 = str(i['loncity'])
+        citylon2 = str(i['citylon2'])
 
-        citylat2 = str(i['latcity'])
+        citylat2 = str(i['citylat2'])
         
         f = '50'
         
