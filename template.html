@@ -78,7 +78,8 @@
         </div><!-- End of DIV for the submission buttons -->
 
         <!-- Link to picture data provided by NASA site -->
-        <div>Use de [+] and [-] buttons to Zoom In and Zoom Out. Press Shift + Left Mouse Button to rotate the image <br><a id="hrefPicture" href='' target='_blank'>ISS picture data - Earth Science and Remote Sensing Unit, NASA-Johnson Space Center. "The Gateway to Astronaut Photography of Earth."</a></div>
+        <div><span class="label label-info">Please, be patient with large ISS images</span><br>
+          Use de [+] and [-] buttons to Zoom In and Zoom Out. Press Shift + Left Mouse Button to rotate the image <br><a id="hrefPicture" href='' target='_blank'>ISS picture data - Earth Science and Remote Sensing Unit, NASA-Johnson Space Center. "The Gateway to Astronaut Photography of Earth."</a></div>
 
         <!-- These are maps -->
         <div id="map" class="map"></div>
@@ -429,15 +430,12 @@ function loadNewISSImage(urlImage){
 
 
 var mapOSM;
-
+var osmlayer = new ol.layer.Tile({source: new ol.source.OSM()});
 function loadOSM(lonOSM, latOSM, zoomOSM){
     mapOSM = new ol.Map({
       target: 'mapOSM',
       layers: [
-        new ol.layer.Tile({
-          source: new ol.source.OSM()
-        }),
-
+        osmlayer
       ],
 
       view: new ol.View({
@@ -477,7 +475,15 @@ function loadOSM(lonOSM, latOSM, zoomOSM){
             zoom: 2
       })
     });
+    //viirs.setVisible(false);
+  //mapOSM.bindTo('layergroup', mapVIIRS);
+  //mapOSM.bindTo('view', mapVIIRS);
 
+}
+
+function changeOSMVIIRSLayers(){
+  
+  viirs.setVisible(true);
 }
 
 function changeMapOSM(lonOSM, latOSM, zoomOSM){
