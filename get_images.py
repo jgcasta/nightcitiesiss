@@ -31,41 +31,48 @@ def get_iss_photos():
     lista=asciitable.read('atlasOfNight.csv') 
 
     for i in lista:
-        tmpMission=i['ISS-ID'].split('-E-')
-        mission = tmpMission[0]
-        idIss = tmpMission[1]
-        
-        pattern_s = "http://eol.jsc.nasa.gov/sseop/images/ESC/%s/%s/%s-E-%s.JPG" % (
-            "small",
-            mission,
-            mission,
-            idIss)
-        pattern_b = "http://eol.jsc.nasa.gov/sseop/images/ESC/%s/%s/%s-E-%s.JPG" % (
-            'large',
-            mission,
-            mission,
-            idIss)
 
-        linkData = "http://eol.jsc.nasa.gov/scripts/sseop/photo.pl?mission=%s&roll=E&frame=%s" % (
-            mission,
-            idIss)
-        idISS = idIss
+        coordFLAG = i['CoordFLAG']
 
-        citylon2 = str(i['loncity'])
+        # only for CoordFLAG selected
 
-        citylat2 = str(i['latcity'])
-        
-        f = '50'
-        
-        tmp = dict(link_small=pattern_s,
-                   link_big=pattern_b,
-                   linkData=linkData,
-                   idISS=idISS,
-                   citylon=citylon2,
-                   citylat=citylat2,
-                   focal=f
-                   )
-        photos.append(tmp)
+        if str(coordFLAG) == '5.0':
+
+            tmpMission=i['ISS-ID'].split('-E-')
+            mission = tmpMission[0]
+            idIss = tmpMission[1]
+            
+            pattern_s = "http://eol.jsc.nasa.gov/sseop/images/ESC/%s/%s/%s-E-%s.JPG" % (
+                "small",
+                mission,
+                mission,
+                idIss)
+            pattern_b = "http://eol.jsc.nasa.gov/sseop/images/ESC/%s/%s/%s-E-%s.JPG" % (
+                'large',
+                mission,
+                mission,
+                idIss)
+
+            linkData = "http://eol.jsc.nasa.gov/scripts/sseop/photo.pl?mission=%s&roll=E&frame=%s" % (
+                mission,
+                idIss)
+            idISS = idIss
+
+            citylon2 = str(i['loncity'])
+
+            citylat2 = str(i['latcity'])
+            
+            f = '50'
+            
+            tmp = dict(link_small=pattern_s,
+                       link_big=pattern_b,
+                       linkData=linkData,
+                       idISS=idISS,
+                       citylon=citylon2,
+                       citylat=citylat2,
+                       focal=f
+                       )
+            photos.append(tmp)
     return photos
 
-#get_iss_photos()
+#print get_iss_photos()
