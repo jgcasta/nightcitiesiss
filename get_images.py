@@ -62,7 +62,7 @@ def get_iss_photos():
 
             citylat2 = str(i['latcity'])
             
-            f = '50'
+            f = str(i['lens'])
             
             tmp = dict(link_small=pattern_s,
                        link_big=pattern_b,
