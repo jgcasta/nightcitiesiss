@@ -1,3 +1,9 @@
+  <!--
+  Para desplazar a la izquierda un poco, poner a 0 el padding de la clase .container y de project-container
+
+  ojo al usar ol2 y ol3!!!!
+  -->
+
   <link href="http://www.iderail.es/testiss/css/ol.css" rel="stylesheet">
   <style type="text/css">
   .map {
@@ -5,6 +11,9 @@
     padding: 10px 10px;
     height: 475px;
     width: 475px;
+  }
+  .issLocation{
+    float: left;
   }
   .mapOSM {
     float: left;
@@ -89,7 +98,9 @@
         <form id='dataList' name='dataList'>
           <input type='button'   onClick="removeOptions()"; value='Remove Selected'><br>
             <SELECT id="xyValues" NAME="xyValues" class="txtISS" MULTIPLE size=5 width=5></SELECT>
-            <SELECT id="lonlatValues" NAME="lonlatValues" class="txtOSM" MULTIPLE size=5 width=7></SELECT><br><br><br><br><br><br>
+            <SELECT id="lonlatValues" NAME="lonlatValues" class="txtOSM" MULTIPLE size=5 width=7></SELECT>
+            <div class='issLocation'><img id='issLocation'></div>
+            <br><br><br><br><br><br>
             <span class="label label-info">2012 Night View from NPP-VIIRS</span>
             <div id="mapVIIRS" class="mapVIIRS"></div>
         </form>
@@ -234,6 +245,7 @@ pybossa.presentTask(function(task, deferred) {
         $('.btn-answer').off('click').on('click', function(evt) {
         $("#hrefPicture").attr("href",task.info.linkData);
         $("#fb-like").attr("data-href",task.info.linkData);
+        $("#issLocation".attr("src",task.info.coordimage));
 
             var answer = $(evt.target).attr("value");
             urlImage = task.info.link_big;
@@ -428,6 +440,15 @@ function loadNewISSImage(urlImage){
 }
 
 
+/*
+- Cambiar la creación de la capa osmlayer
+- Añadir capa de gmaps
+- Añadir capa teselada del VIIRS
+- Modificar changeMapOSM
+- Modificar la captura de puntos
+- Modificar el pintado de puntos al marcar
+- Modificar el borrado de puntos al borrar
+*/
 
 var mapOSM;
 var osmlayer = new ol.layer.Tile({source: new ol.source.OSM()});

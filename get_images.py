@@ -63,6 +63,8 @@ def get_iss_photos():
             citylat2 = str(i['latcity'])
             
             f = str(i['lens'])
+
+            coordimage  = i['coordimage']
             
             tmp = dict(link_small=pattern_s,
                        link_big=pattern_b,
@@ -70,7 +72,8 @@ def get_iss_photos():
                        idISS=idISS,
                        citylon=citylon2,
                        citylat=citylat2,
-                       focal=f
+                       focal=f,
+                       coordimage = coordimage
                        )
             photos.append(tmp)
     return photos
