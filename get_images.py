@@ -14,10 +14,12 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with PyBOSSA.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Modified to compute image extent attributes
 
 import json
 import asciitable
-
+import math
 
 def get_iss_photos():
     """
@@ -62,10 +64,28 @@ def get_iss_photos():
 
             citylat2 = str(i['latcity'])
             
-            f = str(i['lens'])
+            f = str(i['lens']).split(' ')
+            focal = f[0]
 
             coordimage  = i['coordimage']
 
+            #focal = 85.0
+            latitud = citylat2
+
+            radianesX = math.radians((4256/3600) * (206.256 * 8.4 / focal))
+            fovX = 411 * math.sin(radianesX)
+
+            radianesY = math.radians((2832/3600) * (206.265 * 8.4 / focal))
+            fovY = 411 * math.sin(radianesY)
+
+            dx = fovX / 2
+            dy = fovY / 2
+
+            dxg = 180 * dx / (math.pi * 6300 * math.cos(math.radians(latitud)))
+
+            dyg = 180 * dy /(math.pi * 6300)
+
+            print dxg, dyg
             
             tmp = dict(link_small=pattern_s,
                        link_big=pattern_b,
@@ -73,10 +93,10 @@ def get_iss_photos():
                        idISS=idISS,
                        citylon=citylon2,
                        citylat=citylat2,
-                       focal=f,
+                       focal=focal,
                        coordimage = coordimage
                        )
             photos.append(tmp)
     return photos
 
-#print get_iss_photos()
+print get_iss_photos()
