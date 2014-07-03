@@ -96,12 +96,12 @@
 
         <!-- DataList to save  -->
         <form id='dataList' name='dataList'>
-          <input type='button'   onClick="removeOptions()"; value='Remove Selected'><br>
-            <span class="label label-info">X,Y and Lon,Lat coordinates</span><br>
-            <SELECT id="xyValues" NAME="xyValues" class="txtISS" MULTIPLE size=5 width=5></SELECT>
+          &nbsp;<input type='button'   onClick="removeOptions()"; value='Remove Selected'><br>
+            &nbsp;<span class="label label-info">X,Y and Lon,Lat coordinates</span><br>
+            &nbsp;<SELECT id="xyValues" NAME="xyValues" class="txtISS" MULTIPLE size=5 width=5></SELECT>
             <SELECT id="lonlatValues" NAME="lonlatValues" class="txtOSM" MULTIPLE size=5 width=7></SELECT>
             <br><br><br><br><br><br>
-            <span class="label label-info">2012 Night View from NPP-VIIRS</span>
+            &nbsp;<span class="label label-info">&nbsp;&nbsp;2012 Night View from NPP-VIIRS. Red point indicates ISS nadir&nbsp;&nbsp;</span>
             <div id="mapVIIRS" class="mapVIIRS"></div>
         </form>
     </div><!-- End of DIV for the submission buttons -->
@@ -340,8 +340,21 @@ var iconStyle = new ol.style.Style({
   zIndex: 1
 });
 
-var iconFeature;
+var iconStyleVIIRS = new ol.style.Style({
+  image: new ol.style.Circle({
+      radius: 5,
+      fill: new ol.style.Fill({
+          color: [255, 0, 0, 1]
+      }),
+      stroke: new ol.style.Stroke({
+          color: [255, 0, 0, 1],
+          width: 1.5
+      })
+  }),
+  zIndex: 1
+});
 
+var iconFeature;
 var map;
 var ISSlayer;
 
@@ -470,35 +483,6 @@ var osmlayer = new OpenLayers.Layer.OSM();
 var gmaplayerSt = new OpenLayers.Layer.Google("Google Streets",{numZoomLevels: 20});
 var gmaplayerSat = new OpenLayers.Layer.Google("Google Satellite",{type: google.maps.MapTypeId.SATELLITE, numZoomLevels: 22});
 
-var VIIRSlayer = new OpenLayers.Layer.WMTS({
-    name: "VIIRS CityLights 012",
-    url: [
-        "https://map1a.vis.earthdata.nasa.gov/wmts-geo/wmts.cgi",
-        "https://map1b.vis.earthdata.nasa.gov/wmts-geo/wmts.cgi",
-        "https://map1c.vis.earthdata.nasa.gov/wmts-geo/wmts.cgi"
-    ],
-    layer: "VIIRS_CityLights_2012",
-    style: "",
-    matrixSet: "EPSG4326_500m",
-    maxResolution: 0.5625,
-    numZoomLevels: 9,
-    tileSize: new OpenLayers.Size(256, 256),
-    format: "image/jpeg",
-    projection: "EPSG:3857",
-    resolutions: [
-        0.5625,
-        0.28125,
-        0.140625,
-        0.0703125,
-        0.03515625,
-        0.017578125,
-        0.0087890625,
-        0.00439453125,
-        0.002197265625
-    ],
-});
-
-
 var fromProjection = new OpenLayers.Projection("EPSG:4326");   
 var toProjection   = new OpenLayers.Projection("EPSG:900913");
 
@@ -509,12 +493,12 @@ function loadOSM(lonOSM, latOSM, zoomOSM){
          projection: "EPSG:4326"
     });
 
-    // note that first layer must be visible
     mapOSM.addLayers([gmaplayerSt,gmaplayerSat,osmlayer]);
-    //mapOSM.addLayer(VIIRSlayer);
+    
     mapOSM.addControl(new OpenLayers.Control.LayerSwitcher());
-    //var centerPosition = new OpenLayers.LonLat(eval(lonOSM),eval(latOSM));
+
     console.log(centerPosition + ' ' + zoomOSM);
+
     var centerPosition = new OpenLayers.LonLat(eval(lonOSM),eval(latOSM)).transform( fromProjection, toProjection);
     mapOSM.setCenter(centerPosition, zoomOSM );
 
@@ -533,22 +517,38 @@ function loadOSM(lonOSM, latOSM, zoomOSM){
         projection: ol.proj.get("EPSG:4326"),
                     extent: [-180, -90, 180, 90],
             center: [0, 0],
-            zoom: 2
+            zoom: 1
       })
     });
 
-}
+    var icons = [];
+    nadirISS = new ol.Feature({ geometry: new ol.geom.Point([eval(lonOSM),eval(latOSM)])});
+    nadirISS.setStyle(iconStyleVIIRS);
+    icons.push(nadirISS); 
 
-function changeOSMVIIRSLayers(){
+    nadirLayer = new ol.layer.Vector({ source: new ol.source.Vector({ features: icons }) });
   
-  viirs.setVisible(true);
+    mapVIIRS.addLayer(nadirLayer);
+
 }
 
 function changeMapOSM(lonOSM, latOSM, zoomOSM){
 
   console.log('Changing oms center.... ');
+  // change OSM
   var centerPosition = new OpenLayers.LonLat(eval(lonOSM),eval(latOSM)).transform( fromProjection, toProjection);
   mapOSM.setCenter(centerPosition, zoomOSM );
+
+  // change VIIRS
+  mapVIIRS.removeLayer(nadirLayer);
+  var icons = [];
+  nadirISS = new ol.Feature({ geometry: new ol.geom.Point([eval(lonOSM),eval(latOSM)])});
+  nadirISS.setStyle(iconStyleVIIRS);
+  icons.push(nadirISS); 
+
+  nadirLayer = new ol.layer.Vector({ source: new ol.source.Vector({ features: icons }) });
+
+  mapVIIRS.addLayer(nadirLayer);
 
 }
 
@@ -599,14 +599,14 @@ function addPointLayerOSM(){
             posOSM = dataList.lonlatValues.options[i].value.split(',');
 
             var point = new OpenLayers.Geometry.Point(eval(posOSM[0]), eval(posOSM[1]));
-            //point.transform(new OpenLayers.Projection("EPSG:4326"),new OpenLayers.Projection("EPSG:900913"));
+            point.transform(fromProjection, toProjection);
 
             features[i] = new OpenLayers.Feature.Vector(point,null,null);
         }
     }  
 
     var renderer = OpenLayers.Util.getParameters(window.location.href).renderer;
-      renderer = (renderer) ? [renderer] : OpenLayers.Layer.Vector.prototype.renderers;
+    enderer = (renderer) ? [renderer] : OpenLayers.Layer.Vector.prototype.renderers;
 
     pointLayerOSM = new OpenLayers.Layer.Vector('Points', {
         styleMap: new OpenLayers.StyleMap({
@@ -616,22 +616,21 @@ function addPointLayerOSM(){
         renderers: renderer
     });
 
-
-
-
-
     pointLayerOSM.addFeatures([features]);
     mapOSM.addLayer(pointLayerOSM);
 
 }
 
 function removePoint(){
+
   window.map.removeLayer(pointLayer);
-  window.mapOSM.removeLayer(pointLayerOSM);
+
+  if(typeof pointLayerOSM != 'undefined'){
+  
+      window.mapOSM.removeLayer(pointLayerOSM);
+  }
+
 }
-
-
-
 
 
 var sourceViirs = new ol.source.WMTS({
@@ -732,7 +731,6 @@ function getIimDim(urlimage){
 
     dim[0] = this.width;
     dim[1] = this.height;
-    //console.log(dim[0]+' '+dim[1]);
   }
   img.src = urlimage;
   return dim;
