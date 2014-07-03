@@ -1,6 +1,8 @@
 Nightcitiesiss Application for georreferencing cities at night images from ISS
 ==============================================================================
 
+[![Build Status](https://travis-ci.org/jgcasta/nightcitiesiss.svg?branch=master)](https://travis-ci.org/jgcasta/nightcitiesiss)
+
 We are memebers of the  Group of Extragalactic Astrophysics and Astronomical Instrumentation from Universidad Coplutense de Madrid [GUAIX](http://guaix.fis.ucm.es). Among our activities is light pollution study and the energy consumption derived from it. We use images taken from the International Space Station as part of our investigations, provided by NASA
 
 To compare the images with the different light sources on the earth, we need to georreference every picture. This is a process of associating a physical map with spatial locations to the picture, where locations are represented using a coordinate reference system, in this case Longitude and Latitude. Due to the large number of images, we need your help. Some of these pictures are from unknown locations for us, and it is very difficult identify some features on the picture.
