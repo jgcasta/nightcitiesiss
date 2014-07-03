@@ -37,7 +37,7 @@
     float: left;
     padding: 5px 5px;
     height:95px;
-    width: 115px;
+    width: 200px;
   }
   .container {
     margin-right: 10px;
@@ -99,7 +99,6 @@
           <input type='button'   onClick="removeOptions()"; value='Remove Selected'><br>
             <SELECT id="xyValues" NAME="xyValues" class="txtISS" MULTIPLE size=5 width=5></SELECT>
             <SELECT id="lonlatValues" NAME="lonlatValues" class="txtOSM" MULTIPLE size=5 width=7></SELECT>
-            <div class='issLocation'><img id='issLocation'></div>
             <br><br><br><br><br><br>
             <span class="label label-info">2012 Night View from NPP-VIIRS</span>
             <div id="mapVIIRS" class="mapVIIRS"></div>
@@ -186,6 +185,8 @@
 </script>
 <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
  <script src="http://ol3js.org/en/master/build/ol.js" type="text/javascript"></script>
+ <script src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
+ <script src="http://openlayers.org/api/OpenLayers.js"></script>
  
 <script>
 function loadUserProgress() {
@@ -245,7 +246,7 @@ pybossa.presentTask(function(task, deferred) {
         $('.btn-answer').off('click').on('click', function(evt) {
         $("#hrefPicture").attr("href",task.info.linkData);
         $("#fb-like").attr("data-href",task.info.linkData);
-        $("#issLocation".attr("src",task.info.coordimage));
+//        $("#issLocation".attr("src",task.info.coordimage));
 
             var answer = $(evt.target).attr("value");
             urlImage = task.info.link_big;
@@ -440,39 +441,13 @@ function loadNewISSImage(urlImage){
 }
 
 
-/*
-- Cambiar la creación de la capa osmlayer
-- Añadir capa de gmaps
-- Añadir capa teselada del VIIRS
-- Modificar changeMapOSM
-- Modificar la captura de puntos
-- Modificar el pintado de puntos al marcar
-- Modificar el borrado de puntos al borrar
-*/
+function handleMapClick(evt) {
 
-var mapOSM;
-var osmlayer = new ol.layer.Tile({source: new ol.source.OSM()});
-function loadOSM(lonOSM, latOSM, zoomOSM){
-    mapOSM = new ol.Map({
-      target: 'mapOSM',
-      layers: [
-        osmlayer
-      ],
-
-      view: new ol.View({
-        center: ol.proj.transform([eval(lonOSM), eval(latOSM)], 'EPSG:4326', 'EPSG:3857'), 
-        zoom: eval(zoomOSM)
-      })
-    });
-
-    mapOSM.on('click', function(evt) {
-      var coordinate = evt.coordinate;
-      var hdms = ol.coordinate.toStringHDMS(ol.proj.transform(
-          coordinate, 'EPSG:3857', 'EPSG:4326'));
-
-       if (clickMap == false){
+      if (clickMap == false){
         
-        var coord = ol.coordinate.toStringXY(ol.proj.transform(coordinate, 'EPSG:3857', 'EPSG:4326'),6);
+        var lonlat = mapOSM.getLonLatFromViewPortPx(evt.xy).transform(new OpenLayers.Projection("EPSG:900913"), new OpenLayers.Projection("EPSG:4326"));
+        var coord = lonlat.lon.toFixed(6) + ',' + lonlat.lat.toFixed(6);
+
         addOption(document.dataList.lonlatValues, coord,coord);
         
         addPointLayerOSM();
@@ -480,7 +455,30 @@ function loadOSM(lonOSM, latOSM, zoomOSM){
         clickImg = false;
         
       }
+    } 
+
+var mapOSM;
+var osmlayer = new OpenLayers.Layer.OSM();
+var gmaplayer = new OpenLayers.Layer.Google("Google Streets");
+var fromProjection = new OpenLayers.Projection("EPSG:4326");   
+var toProjection   = new OpenLayers.Projection("EPSG:900913");
+
+function loadOSM(lonOSM, latOSM, zoomOSM){
+
+    mapOSM = new OpenLayers.Map({
+        div: "mapOSM"
     });
+
+    // note that first layer must be visible
+    mapOSM.addLayers([gmaplayer,osmlayer]);
+    mapOSM.addControl(new OpenLayers.Control.LayerSwitcher());
+ 
+    var centerPosition = new OpenLayers.LonLat(eval(lonOSM),eval(latOSM)).transform( fromProjection, toProjection);
+    mapOSM.setCenter(centerPosition, zoomOSM );
+
+    mapOSM.events.register('click', mapOSM, handleMapClick);
+
+
 
     //load VIIRS help map
     mapVIIRS = new ol.Map({
@@ -496,9 +494,6 @@ function loadOSM(lonOSM, latOSM, zoomOSM){
             zoom: 2
       })
     });
-    //viirs.setVisible(false);
-  //mapOSM.bindTo('layergroup', mapVIIRS);
-  //mapOSM.bindTo('view', mapVIIRS);
 
 }
 
@@ -509,12 +504,8 @@ function changeOSMVIIRSLayers(){
 
 function changeMapOSM(lonOSM, latOSM, zoomOSM){
 
-  var view= new ol.View({
-    center: ol.proj.transform([eval(lonOSM), eval(latOSM)], 'EPSG:4326', 'EPSG:3857'),
-    zoom: eval(zoomOSM)
-  });
-  
-  mapOSM.setView(view);
+  var centerPosition = new OpenLayers.LonLat(eval(lonOSM),eval(latOSM)).transform( fromProjection, toProjection);
+  mapOSM.setCenter(centerPosition, zoomOSM );
 
 }
 
@@ -549,29 +540,31 @@ function addPointLayer(){
 var pointLayerOSM;
 var pointLayer;
 function addPointLayerOSM(){
-
-  window.mapOSM.removeLayer(pointLayerOSM);
-  var posOSM = [];
-  var iconsOSM = [];
   
-  for(i=0;i<dataList.lonlatValues.options.length ;i++){
-    
-    if(typeof dataList.lonlatValues.options[i].value != 'undefined'){
-      
-      posOSM = dataList.lonlatValues.options[i].value.split(',');
-
-      iconFeatureOSM = new ol.Feature({ geometry: new ol.geom.Point(ol.proj.transform([eval(posOSM[0]), eval(posOSM[1])], 'EPSG:4326', 'EPSG:3857'))});
-      iconFeatureOSM.setStyle(iconStyle);
-      iconsOSM.push(iconFeatureOSM);    
-
+    if(typeof pointLayerOSM != 'undefined'){
+        window.mapOSM.removeLayer(pointLayerOSM);
     }
-  }  
 
-  pointLayerOSM = new ol.layer.Vector({ 
-    source: new ol.source.Vector({ features: iconsOSM }) 
-  })
-  
-  mapOSM.addLayer(pointLayerOSM);
+    var posOSM = [];
+
+    pointLayerOSM = new OpenLayers.Layer.Vector("Points Layer");
+
+    for(i=0;i<dataList.lonlatValues.options.length ;i++){
+
+        if(typeof dataList.lonlatValues.options[i].value != 'undefined'){
+          
+            posOSM = dataList.lonlatValues.options[i].value.split(',');
+
+            var point = new OpenLayers.Geometry.Point(eval(posOSM[0]), eval(posOSM[1]));
+            point.transform(new OpenLayers.Projection("EPSG:4326"),new OpenLayers.Projection("EPSG:900913"));
+
+            // comprobar si se puede crear un array de points y añadirlo a un solo pointFeature, y al final addFeatures
+            var pointFeature = new OpenLayers.Feature.Vector(point,null,null);
+            pointLayerOSM.addFeatures([pointFeature]);
+
+        }
+    }  
+    mapOSM.addLayer(pointLayerOSM);
 
 }
 
@@ -688,5 +681,5 @@ function getIimDim(urlimage){
   return dim;
 }
 
-pybossa.run('nightcitiesiss');
+pybossa.run('nightcitiesissgmaps');
 </script>
