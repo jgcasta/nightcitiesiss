@@ -471,7 +471,7 @@ function handleMapClick(evt) {
         addPointLayerOSM();
         clickMap = true;
         clickImg = false;
-        
+        mapOSM.addLayer(pointLayerOSM);  
       }
     } 
 
@@ -534,7 +534,6 @@ function loadOSM(lonOSM, latOSM, zoomOSM){
 
 function changeMapOSM(lonOSM, latOSM, zoomOSM){
 
-  console.log('Changing oms center.... ');
   // change OSM
   var centerPosition = new OpenLayers.LonLat(eval(lonOSM),eval(latOSM)).transform( fromProjection, toProjection);
   mapOSM.setCenter(centerPosition, zoomOSM );
@@ -580,17 +579,35 @@ function addPointLayer(){
 
 }
 
-var pointLayerOSM;
+
 var pointLayer;
+
+var renderer = OpenLayers.Util.getParameters(window.location.href).renderer;
+enderer = (renderer) ? [renderer] : OpenLayers.Layer.Vector.prototype.renderers;
+var pointLayerOSM = new OpenLayers.Layer.Vector('Points', {
+        styleMap: new OpenLayers.StyleMap({
+            pointRadius: "5", 
+            fillColor: "#fc0000"
+        }),
+        renderers: renderer
+    });
 function addPointLayerOSM(){
   
-    if(typeof pointLayerOSM != 'undefined'){
-      console.log('borrando pointLayerOSM')
-        window.mapOSM.removeLayer(pointLayerOSM);
+    if(typeof pointLayerOSM != 'undefined' && removePoint == false){
+        //pointLayerOSM.destroyFeatures();
+        //window.mapOSM.removeLayer(pointLayerOSM);
     }
 
     var posOSM = [];
     var features = new Array(50);
+    /*
+    pointLayerOSM = new OpenLayers.Layer.Vector('Points', {
+        styleMap: new OpenLayers.StyleMap({
+            pointRadius: "5", 
+            fillColor: "#fc0000"
+        }),
+        renderers: renderer
+    });*/
 
     for(i=0;i<dataList.lonlatValues.options.length ;i++){
 
@@ -600,24 +617,14 @@ function addPointLayerOSM(){
 
             var point = new OpenLayers.Geometry.Point(eval(posOSM[0]), eval(posOSM[1]));
             point.transform(fromProjection, toProjection);
+            var featureP = new OpenLayers.Feature.Vector(point);
 
-            features[i] = new OpenLayers.Feature.Vector(point,null,null);
+            pointLayerOSM.addFeatures([featureP]);
         }
     }  
 
-    var renderer = OpenLayers.Util.getParameters(window.location.href).renderer;
-    enderer = (renderer) ? [renderer] : OpenLayers.Layer.Vector.prototype.renderers;
 
-    pointLayerOSM = new OpenLayers.Layer.Vector('Points', {
-        styleMap: new OpenLayers.StyleMap({
-            pointRadius: "2", 
-            fillColor: "#666666"
-        }),
-        renderers: renderer
-    });
-
-    pointLayerOSM.addFeatures([features]);
-    mapOSM.addLayer(pointLayerOSM);
+    //mapOSM.addLayer(pointLayerOSM);
 
 }
 
@@ -674,15 +681,16 @@ function addOption(selectbox,text,value ){
   selectbox.options.add(optn);
 }
 
-
+var removed = false;
 function removeOptions(){
-
+    removed = true;
+    pointLayerOSM.destroyFeatures();
     var xyDeleted = false;
-    for(var i=0; i<dataList.xyValues.options.length;i++){
+    for(var i=0; i<dataList.xyValues.options.length-1;i++){
       
       if(dataList.xyValues.options[i].selected){
         window.map.removeLayer(pointLayer);
-        window.mapOSM.removeLayer(pointLayerOSM);
+       //window.mapOSM.removeLayer(pointLayerOSM);
         dataList.xyValues.remove(i);
         dataList.lonlatValues.remove(i);
         xyDeleted = true;
@@ -690,7 +698,7 @@ function removeOptions(){
         addPointLayerOSM();
       }
       if( !xyDeleted && dataList.lonlatValues.options[i].selected ){
-        window.mapOSM.removeLayer(pointLayerOSM);
+        //window.mapOSM.removeLayer(pointLayerOSM);
         window.map.removeLayer(pointLayer);
         dataList.lonlatValues.remove(i);
         dataList.xyValues.remove(i);
