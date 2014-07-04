@@ -1,0 +1,81 @@
+<!--
+    WMTS VIIRS using ol2
+ 
+    José Gómez Castaño
+    jgomez03@pdi.ucm.es
+ 
+-->
+<!doctype html>
+
+<html>
+    <head>
+        <title>Cliente VIIRS con OpenLayers 2</title>
+
+        <link rel="stylesheet" href="https://earthdata.nasa.gov/labs/gibs/examples/openlayers2/lib/openlayers-2.13.1/theme/default/style.css"/>
+        <link rel="stylesheet" href="https://earthdata.nasa.gov/labs/gibs/examples/openlayers2/css/example.css"/>
+
+        <script src="https://earthdata.nasa.gov/labs/gibs/examples/openlayers2/lib/openlayers-2.13.1/OpenLayers.js"></script>
+        <script>
+
+        window.onload = function() {
+
+            var map = new OpenLayers.Map({
+                div: "map",
+                projection: "EPSG:4326",
+                numZoomLevels: 9,
+            });
+
+            var layer = new OpenLayers.Layer.WMTS({
+                name: "Terra / MODIS Corrected Reflectance (True Color)",
+                url: [
+                    "https://map1a.vis.earthdata.nasa.gov/wmts-geo/wmts.cgi",
+                    "https://map1b.vis.earthdata.nasa.gov/wmts-geo/wmts.cgi",
+                    "https://map1c.vis.earthdata.nasa.gov/wmts-geo/wmts.cgi"
+                ],
+                layer: "VIIRS_CityLights_2012",
+                style: "",
+                matrixSet: "EPSG4326_500m",
+                maxResolution: 0.5625,
+                numZoomLevels: 9,
+                tileSize: new OpenLayers.Size(512, 512),
+                format: "image/jpeg",
+                projection: "EPSG:4326",
+                resolutions: [
+                    0.5625,
+                    0.28125,
+                    0.140625,
+                    0.0703125,
+                    0.03515625,
+                    0.017578125,
+                    0.0087890625,
+                    0.00439453125,
+                    0.002197265625
+                ],
+            });
+            
+            map.addControl(
+                new OpenLayers.Control.MousePosition({
+                    prefix: '<a target="_blank" ' +
+                        'href="http://spatialreference.org/ref/epsg/4326/">' +
+                        'EPSG:4326</a> coordinates: ',
+                    separator: ' | ',
+                    numDigits: 2,
+                    emptyString: 'Mouse is not over map.'
+                })
+            );
+
+            map.events.register("mousemove", map, function(e) {
+                var position = this.events.getMousePosition(e);
+                OpenLayers.Util.getElement("coords").innerHTML = position;
+            });
+
+            map.addLayer(layer);
+            map.setCenter([0, 0], 2);
+        };
+        </script>
+    </head>
+
+    <body>
+        <div id="map"></div>
+    </body>
+</html>

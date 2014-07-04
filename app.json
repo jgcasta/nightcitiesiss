@@ -1,6 +1,6 @@
 {
-    "name": "Night Cities ISS",
-    "short_name": "nightcitiesiss",
+    "name": "Night Cities ISS gmaps" ,
+    "short_name": "nightcitiesissgmaps",
     "thumbnail": "http://i.imgur.com/dwTQdJU.jpg?1",
     "description": "Georreference City images from ISS",
     "question": "Help us to Georreference City images taken from ISS at nigth"

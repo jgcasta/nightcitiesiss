@@ -1,0 +1,5 @@
+{ 
+    'name': 'Night Cities ISS gmaps',
+    'short_name': 'nightcitiesissgmaps',
+    'description': 'Georreference City images from ISS'
+ }

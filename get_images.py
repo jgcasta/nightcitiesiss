@@ -72,20 +72,7 @@ def get_iss_photos():
             #focal = 85.0
             latitud = citylat2
 
-            radianesX = math.radians((4256/3600) * (206.256 * 8.4 / focal))
-            fovX = 411 * math.sin(radianesX)
 
-            radianesY = math.radians((2832/3600) * (206.265 * 8.4 / focal))
-            fovY = 411 * math.sin(radianesY)
-
-            dx = fovX / 2
-            dy = fovY / 2
-
-            dxg = 180 * dx / (math.pi * 6300 * math.cos(math.radians(latitud)))
-
-            dyg = 180 * dy /(math.pi * 6300)
-
-            print dxg, dyg
             
             tmp = dict(link_small=pattern_s,
                        link_big=pattern_b,
@@ -99,4 +86,4 @@ def get_iss_photos():
             photos.append(tmp)
     return photos
 
-print get_iss_photos()
+#print get_iss_photos()
