@@ -96,8 +96,6 @@
             &nbsp;<span class="label label-info">X,Y and Lon,Lat coordinates</span><br>
             &nbsp;<SELECT id="xyValues" NAME="xyValues" class="txtISS" MULTIPLE size=5 width=5></SELECT>
             <SELECT id="lonlatValues" NAME="lonlatValues" class="txtOSM" MULTIPLE size=5 width=7></SELECT>
-
-            <!-- <div class='issLocation'><img id='issLocation'></div> -->
             <br><br><br><br><br><br>
             &nbsp;<span class="label label-info">&nbsp;&nbsp;2012 Night View from NPP-VIIRS. Red point indicates ISS nadir&nbsp;&nbsp;</span>
             <div id="mapVIIRS" class="mapVIIRS"></div>
@@ -307,12 +305,10 @@ pybossa.presentTask(function(task, deferred) {
         $('.btn-answer').off('click').on('click', function(evt) {
         $("#hrefPicture").attr("href",task.info.linkData);
         $("#fb-like").attr("data-href",task.info.linkData);
-
         // coordimage logging control. Update img src
         //console.log(task.info.coordimage);
 
 //        $("#issLocation".attr("src",task.info.coordimage));
-
 
             var answer = $(evt.target).attr("value");
             urlImage = task.info.link_big;
@@ -520,9 +516,7 @@ function loadNewISSImage(urlImage){
 }
 
 
-
 function handleMapClick(evt) {
-
 
       if (clickMap == false){
         
