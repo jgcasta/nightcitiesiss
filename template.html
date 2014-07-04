@@ -82,7 +82,7 @@
         </div><!-- End of DIV for the submission buttons -->
 
         <!-- Link to picture data provided by NASA site -->
-        <div><span class="label label-info">Please, be patient with large ISS images</span><br>
+        <div><span class="label label-danger">Please, be patient with large ISS images</span><br>
           Use de [+] and [-] buttons to Zoom In and Zoom Out. Press Shift + Left Mouse Button to rotate the image <br><a id="hrefPicture" href='' target='_blank'>ISS picture data - Earth Science and Remote Sensing Unit, NASA-Johnson Space Center. "The Gateway to Astronaut Photography of Earth."</a></div>
 
         <!-- These are maps -->
@@ -205,6 +205,26 @@ var clickImg = false;
 var clickMap = false;
 var urlImage = '';
 var urlImageFirst = 'http://eol.jsc.nasa.gov/sseop/images/ESC/small/ISS030/ISS030-E-67805.JPG';
+
+var fovPoints = [
+    new OpenLayers.Geometry.Point(0, 0).transform( fromProjection, toProjection),
+    new OpenLayers.Geometry.Point(0, 100).transform( fromProjection, toProjection),
+    new OpenLayers.Geometry.Point(100, 100).transform( fromProjection, toProjection),
+    new OpenLayers.Geometry.Point(100, 0).transform( fromProjection, toProjection)
+];
+var fieldRectangle = new OpenLayers.Geometry.LinearRing(fovPoints);
+var fovRectangle = new OpenLayers.Geometry.Polygon([fieldRectangle]);
+
+var fovStyle = { 
+  strokeColor: '#0000ff', 
+  strokeOpacity: 1,
+  strokeWidth: 5
+};
+var fovFeature = new OpenLayers.Feature.Vector(fieldRectangle, null,fovStyle);
+var fovLayer = new OpenLayers.Layer.Vector("FOV");
+fovLayer.addFeatures([fovFeature]);
+
+console.log('cargado rectangulo');
 
 pybossa.taskLoaded(function(task, deferred) {
     if ( !$.isEmptyObject(task) ) {
@@ -497,6 +517,9 @@ function loadOSM(lonOSM, latOSM, zoomOSM){
     mapOSM.setCenter(centerPosition, zoomOSM );
 
     mapOSM.events.register('click', mapOSM, handleMapClick);
+    console.log('add FOV rectangle');
+    //mapOSM.addLayer(fovLayer);
+    console.log('creado FOV rectangle');
 
 
 
