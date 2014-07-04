@@ -205,12 +205,12 @@ var clickImg = false;
 var clickMap = false;
 var urlImage = '';
 var urlImageFirst = 'http://eol.jsc.nasa.gov/sseop/images/ESC/small/ISS030/ISS030-E-67805.JPG';
-
+/*
 var fovPoints = [
     new OpenLayers.Geometry.Point(0, 0).transform( fromProjection, toProjection),
-    new OpenLayers.Geometry.Point(0, 100).transform( fromProjection, toProjection),
-    new OpenLayers.Geometry.Point(100, 100).transform( fromProjection, toProjection),
-    new OpenLayers.Geometry.Point(100, 0).transform( fromProjection, toProjection)
+    new OpenLayers.Geometry.Point(0, 10000).transform( fromProjection, toProjection),
+    new OpenLayers.Geometry.Point(10000, 10000).transform( fromProjection, toProjection),
+    new OpenLayers.Geometry.Point(10000, 0).transform( fromProjection, toProjection)
 ];
 var fieldRectangle = new OpenLayers.Geometry.LinearRing(fovPoints);
 var fovRectangle = new OpenLayers.Geometry.Polygon([fieldRectangle]);
@@ -223,8 +223,49 @@ var fovStyle = {
 var fovFeature = new OpenLayers.Feature.Vector(fieldRectangle, null,fovStyle);
 var fovLayer = new OpenLayers.Layer.Vector("FOV");
 fovLayer.addFeatures([fovFeature]);
+*/
+/*
+var box_extents = [
+                [-10, 50, 5, 60],
+                [-75, 41, -71, 44],
+                [-122.6, 37.6, -122.3, 37.9],
+                [10, 10, 20, 20]
+            ];
 
-console.log('cargado rectangulo');
+var boxes  = new OpenLayers.Layer.Boxes( "Boxes" );
+
+for (var i = 0; i < box_extents.length; i++) {
+                    ext = box_extents[i];
+                    bounds = OpenLayers.Bounds.fromArray(ext);
+                    box = new OpenLayers.Marker.Box(bounds);
+                    box.events.register("click", box, function (e) {
+                        this.setBorder("yellow");
+                    });
+                    boxes.addMarker(box);
+                }
+*/
+
+    var boxes = new OpenLayers.Layer.Vector("Vector Layer");
+    
+    var proj = new OpenLayers.Projection("EPSG:4326");
+    var style_green = {strokeColor: "#ff3300",strokeOpacity: 1,strokeWidth: 2,fillColor: "#FF9966",fillOpacity: 0.1};
+    var p1 = new OpenLayers.Geometry.Point(-154,64)
+    p1.transform(proj, toProjection);
+    var p2 = new OpenLayers.Geometry.Point(-154,67)
+    p2.transform(proj, toProjection);
+    var p3 = new OpenLayers.Geometry.Point(-150,67)
+    p3.transform(proj, toProjection);
+    var p4 = new OpenLayers.Geometry.Point(-150,65)
+    p4.transform(proj, toProjection);
+    var points = [];
+    points.push(p1);
+    points.push(p2);
+    points.push(p3);
+    points.push(p4);
+    var poly = new OpenLayers.Geometry.LinearRing(points);
+    var polygonFeature = new OpenLayers.Feature.Vector(poly, null, style_green);
+    boxes.addFeatures([polygonFeature]);
+
 
 pybossa.taskLoaded(function(task, deferred) {
     if ( !$.isEmptyObject(task) ) {
@@ -517,9 +558,9 @@ function loadOSM(lonOSM, latOSM, zoomOSM){
     mapOSM.setCenter(centerPosition, zoomOSM );
 
     mapOSM.events.register('click', mapOSM, handleMapClick);
-    console.log('add FOV rectangle');
-    //mapOSM.addLayer(fovLayer);
-    console.log('creado FOV rectangle');
+    
+    //mapOSM.addLayer(boxes);
+    
 
 
 
