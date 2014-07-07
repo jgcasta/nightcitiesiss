@@ -675,8 +675,8 @@ function removePoint(){
   window.map.removeLayer(pointLayer);
 
   if(typeof pointLayerOSM != 'undefined'){
-  
-      window.mapOSM.removeLayer(pointLayerOSM);
+    pointLayerOSM.destroyFeatures();
+      //window.mapOSM.removeLayer(pointLayerOSM);
   }
 
 }
@@ -784,5 +784,5 @@ function getIimDim(urlimage){
   return dim;
 }
 
-pybossa.run('nightcitiesissgmaps');
+pybossa.run('nightcitiesiss');
 </script>
