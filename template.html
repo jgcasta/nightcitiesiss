@@ -326,10 +326,11 @@ pybossa.presentTask(function(task, deferred) {
                 lonlat = '';
                 task.answer.dimX = dimX;
                 task.answer.dimY = dimY;
-
+                console.log('Salvando datos');
                 pybossa.saveTask(task.id, task.answer).done(function() {
                     deferred.resolve();
                 });
+                console.log('datos salvados');
 
                 $("#step1").show();
 
