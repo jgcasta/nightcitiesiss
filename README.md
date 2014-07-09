@@ -31,7 +31,7 @@ This application has three files:
 *  template.html: the view for every task and deal with the data of the answers.
 *  tutorial.html: a simple tutorial for the volunteers.
 
-[![ScreenShot](http://i.imgur.com/zdHPu0a.png)](http://www.youtube.com/embed/TFw1G0RnbJM)
+[![ScreenShot](http://i.imgur.com/zdHPu0a.png)](http://www.youtube.com/embed/z3p1jbqpXrY)
 
 Testing the application
 =======================
