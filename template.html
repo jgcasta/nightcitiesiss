@@ -269,7 +269,7 @@ for (var i = 0; i < box_extents.length; i++) {
 
 pybossa.taskLoaded(function(task, deferred) {
     if ( !$.isEmptyObject(task) ) {
-
+        $("#success").hide();
         task.answer = {
             'imageResult' : '',
             'XY': '',
@@ -333,6 +333,7 @@ pybossa.presentTask(function(task, deferred) {
                 console.log('datos salvados');
 
                 $("#step1").show();
+                $("#success").show();
 
                 changeMapOSM(task.info.citylon,task.info.citylat,9);
                 removeAllOptions();
@@ -497,7 +498,8 @@ function unloadISSImage(){
 }
 
 function loadNewISSImage(urlImage){
-
+  console.log('cargando imagen');
+  $("#loading").show();
   var dim = new Array();
   var img = new Image();
   img.onload = function() {
@@ -511,7 +513,7 @@ function loadNewISSImage(urlImage){
     map.removeLayer(ISSlayer);
     createISSLayer(urlImage, dimX, dimY); 
     map.addLayer(ISSlayer);
-
+    $("#loading").hide();
   } // img.load
   img.src = urlImage;
 }
