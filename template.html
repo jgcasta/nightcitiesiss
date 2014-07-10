@@ -305,11 +305,11 @@ pybossa.presentTask(function(task, deferred) {
             }
         });
 
-        $("#loading").hide();
+        //$("#loading").hide();
     }
     else {
         $(".skeleton").hide();
-        $("#loading").hide();
+        //$("#loading").hide();
         $("#finish").fadeIn(500);
     }
 });
@@ -456,7 +456,7 @@ function loadNewISSImage(urlImage){
     map.removeLayer(ISSlayer);
     createISSLayer(urlImage, dimX, dimY); 
     map.addLayer(ISSlayer);
-
+    $("#loading").hide();
   } // img.load
   img.src = urlImage;
 }
