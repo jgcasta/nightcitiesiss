@@ -19,6 +19,12 @@ If you need more information about this picture, you can click on "ISS picture d
 
 We apreciate your job very much
 
+Tutorial
+========
+
+[![ScreenShot](http://i.imgur.com/zdHPu0a.png)](http://www.youtube.com/embed/z3p1jbqpXrY)
+
+
 Framework
 =========
 
@@ -31,7 +37,6 @@ This application has three files:
 *  template.html: the view for every task and deal with the data of the answers.
 *  tutorial.html: a simple tutorial for the volunteers.
 
-[![ScreenShot](http://i.imgur.com/zdHPu0a.png)](http://www.youtube.com/embed/z3p1jbqpXrY)
 
 Testing the application
 =======================
