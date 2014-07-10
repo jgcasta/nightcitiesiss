@@ -54,9 +54,6 @@ def handle_arguments():
                       help="Update Tasks template",
                       metavar="UPDATE-TEMPLATE")
 
-
-
-
     # Update tasks question
     parser.add_option("-q", "--update-tasks",
                       type="int",
@@ -140,7 +137,7 @@ def run(app_config, options):
         app = find_app_by_short_name()
         app.long_description = contents('long_description.html')
         app.info['task_presenter'] = contents('template.html')
-        app.info['thumbnail'] = app_config['thumbnail'] #Cuidado que tira el icono de la aplicacion
+        app.info['thumbnail'] = app_config['thumbnail'] 
         app.info['tutorial'] = contents('tutorial.html')
 
         try:
@@ -160,7 +157,8 @@ def run(app_config, options):
                          linkData=photo['linkData'],
                          citylon=photo['citylon'],
                          citylat=photo['citylat'],
-                         focal=photo['focal'])
+                         focal=photo['focal'],
+                         coordimage=photo['coordimage'])
         try:
             response = pbclient.create_task(app.id, task_info, priority_0=priority)
             check_api_error(response)

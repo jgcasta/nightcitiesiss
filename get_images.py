@@ -14,13 +14,15 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with PyBOSSA.  If not, see <http://www.gnu.org/licenses/>.
+
 '''
     Modified to get informtation about ISS pictures metadada
 '''
 
+
 import json
 import asciitable
-
+import math
 
 def get_iss_photos():
     """
@@ -32,20 +34,20 @@ def get_iss_photos():
     """
     photos = []
 
-    lista=asciitable.read('demo.csv') 
+    lista=asciitable.read('atlasOfNight.csv') 
 
     for i in lista:
 
-        CoordFLAG = i['CoordFLAG']
-    
+        coordFLAG = i['CoordFLAG']
+
         # only for CoordFLAG selected
 
-        if str(CoordFLAG) == '5.0':
+        if str(coordFLAG) == '5.0':
+
             tmpMission=i['ISS-ID'].split('-E-')
             mission = tmpMission[0]
             idIss = tmpMission[1]
- 
-            city = i['City']
+
             
             pattern_s = "http://eol.jsc.nasa.gov/sseop/images/ESC/%s/%s/%s-E-%s.JPG" % (
                 "small",
@@ -63,22 +65,29 @@ def get_iss_photos():
                 idIss)
             idISS = idIss
 
-            citylon = str(i['loncity'])
-            
 
-            citylat = str(i['latcity'])
+            citylon2 = str(i['loncity'])
+
+            citylat2 = str(i['latcity'])
             
-            f = '50'
+            f = str(i['lens']).split(' ')
+            focal = f[0]
+
+            coordimage  = i['coordimage']
+
+            #focal = 85.0
+            latitud = citylat2
             
             tmp = dict(link_small=pattern_s,
                        link_big=pattern_b,
                        linkData=linkData,
                        idISS=idISS,
-                       citylon=citylon,
-                       citylat=citylat,
-                       focal=f
+                       citylon=citylon2,
+                       citylat=citylat2,
+                       focal=focal,
+                       coordimage = coordimage
                        )
             photos.append(tmp)
     return photos
+#print get_iss_photos()
 
-get_iss_photos()

@@ -7,7 +7,7 @@
 import urllib2
 import json
 
-req = urllib2.Request("http://crowdcrafting.org/api/task?app_id=1608")
+req = urllib2.Request("http://crowdcrafting.org/api/task?app_id=1712&limit=1000")
 opener = urllib2.build_opener()
 f = opener.open(req)
 json = json.loads(f.read())
@@ -15,7 +15,7 @@ json = json.loads(f.read())
 f = open("linktasks.csv", "w")
 
 f.writelines('idiss,lon,lat,linkTask,linkSmall\n')
-
+print len(json)
 for i in range(len(json)):
 
 	linkTask = 'http://crowdcrafting.org/app/nightcitiesiss/task/' + str(json[i]['id'])
