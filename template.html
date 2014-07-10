@@ -210,8 +210,7 @@ pybossa.taskLoaded(function(task, deferred) {
     if ( !$.isEmptyObject(task) ) {
 
         $("#success").hide();
-        
-
+       
         task.answer = {
             'imageResult' : '',
             'XY': '',
@@ -441,7 +440,9 @@ function unloadISSImage(){
 }
 
 function loadNewISSImage(urlImage){
+
   $("#loading").show();
+
 
   var dim = new Array();
   var img = new Image();
@@ -730,5 +731,5 @@ function getIimDim(urlimage){
   return dim;
 }
 
-pybossa.run('nightcitiesiss');
+pybossa.run('nightcitiesissfix');
 </script>

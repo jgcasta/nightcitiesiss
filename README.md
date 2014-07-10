@@ -69,7 +69,5 @@ Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0 Internacional Lic
 
 ![UCM](https://raw.githubusercontent.com/jgcasta/nightcitiesiss/master/img/LogoUCM.jpg) ![Campus](https://raw.githubusercontent.com/jgcasta/nightcitiesiss/master/img/campuslogo.gif) ![MediaLab](http://medialab-prado.es/static/img/logo_mlp_web_rgb.png) ![LoNNe](http://www.cost-lonne.eu/wp-content/themes/Puschnig/images/logo.gif)
 
-
-
 ![NASA](https://raw.githubusercontent.com/jgcasta/nightcitiesiss/master/img/nasalogo.jpg) ![ROSCOSMOS](https://raw.githubusercontent.com/jgcasta/nightcitiesiss/master/img/roscosmos.jpg) ![ESA](https://raw.githubusercontent.com/jgcasta/nightcitiesiss/master/img/esa.jpg) ![CANADA](https://raw.githubusercontent.com/jgcasta/nightcitiesiss/master/img/canada.jpg) JAXA
 
