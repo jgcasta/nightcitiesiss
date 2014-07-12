@@ -49,7 +49,7 @@
         </div>
         <div id="loading" class="alert alert-info" style="display:none;">
             <a class="close">×</a>
-            Loading next task...
+            Loading large image...Please wait!
         </div>
         <div id="taskcompleted" class="alert alert-info" style="display:none;">
             <strong>The task has been completed!</strong> Thanks a lot!
@@ -388,7 +388,7 @@ function createISSLayer(urlImage, imgX, imgY){
 var dimX,dimY;
 
 function loadISSImage(urlImage){
-
+  $("#loading").show();
   var dim = new Array();
   var img = new Image();
   img.onload = function() {
@@ -431,6 +431,7 @@ function loadISSImage(urlImage){
 
         }
       });
+      $("#loading").hide();
   } // img.load
   img.src = urlImage;
   
