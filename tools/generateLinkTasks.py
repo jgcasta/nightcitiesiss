@@ -7,10 +7,14 @@
 import urllib2
 import json
 
-req = urllib2.Request("http://crowdcrafting.org/api/task?app_id=1712&limit=1000")
+req = urllib2.Request("http://crowdcrafting.org/api/task?app_id=1712&limit=10000")
 opener = urllib2.build_opener()
 f = opener.open(req)
 json = json.loads(f.read())
+
+print json
+
+print json[0]['info']['idiss']
 
 f = open("linktasks.csv", "w")
 
