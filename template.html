@@ -305,11 +305,9 @@ pybossa.presentTask(function(task, deferred) {
             }
         });
 
-        //$("#loading").hide();
     }
     else {
         $(".skeleton").hide();
-        //$("#loading").hide();
         $("#finish").fadeIn(500);
     }
 });
@@ -505,10 +503,6 @@ function loadOSM(lonOSM, latOSM, zoomOSM){
     mapOSM.setCenter(centerPosition, zoomOSM );
 
     mapOSM.events.register('click', mapOSM, handleMapClick);
-    
-    //mapOSM.addLayer(boxes);
-    
-
 
 
     //load VIIRS help map
@@ -623,7 +617,6 @@ function removePoint(){
 
   if(typeof pointLayerOSM != 'undefined'){
     pointLayerOSM.destroyFeatures();
-      //window.mapOSM.removeLayer(pointLayerOSM);
   }
 
 }
