@@ -23,7 +23,7 @@ print len(json)
 for i in range(len(json)):
 
 	linkTask = 'http://crowdcrafting.org/app/nightcitiesiss/task/' + str(json[i]['id'])
-	line = json[i]['info']['idiss'] + ',' + json[i]['info']['nlon'] + ',' + json[i]['info']['nlat'] + ',' + linkTask + ',' + json[i]['info']['link_small'] + '\n'
+	line = json[i]['info']['idiss'] + ',' + json[i]['info']['citylon'] + ',' + json[i]['info']['citylat'] + ',' + linkTask + ',' + json[i]['info']['link_small'] + '\n'
 
 	f.writelines(line) 
 
