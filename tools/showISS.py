@@ -21,7 +21,7 @@ import Image
 from StringIO import StringIO
 
 # si se quiere pintar el nombre de la imagen sobre el mapa se pone su identificador aqui
-idiss = 'ISS030-E-163106'
+idiss = 'ISS034-E-38784'
 hayProxy = False
 
 # cargo las características de todas las imágenes
@@ -63,10 +63,13 @@ map.plot(x, y, 'ro', markersize=5)
 plt.title('ISS image locations for  ' +  idiss) 
 plt.show()
 
-plt.text(xpt, ypt, images)
+
 
 # visualizo la imagen
 images, xpt, ypt = images[0], x[0], y[0]
+
+plt.text(xpt, ypt, images)
+
 tmpMission=idiss.split('-E-')
 mission = tmpMission[0]
 idIss = tmpMission[1]
