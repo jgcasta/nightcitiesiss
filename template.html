@@ -296,9 +296,9 @@ pybossa.presentTask(function(task, deferred) {
                 changeMapOSM(task.info.citylon,task.info.citylat,9);
                 loadNewISSImage(urlImage);   
                 task.answer.imageResult = 'unknown';
-                //pybossa.saveTask(task.id, task.answer).done(function() {
+                pybossa.saveTask(task.id, task.answer).done(function() {
                     deferred.resolve();
-                //});  
+                });  
                 $("#loading").show();
               }
 
