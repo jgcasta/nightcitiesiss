@@ -267,10 +267,14 @@ pybossa.presentTask(function(task, deferred) {
                 task.answer.dimX = dimX;
                 task.answer.dimY = dimY;
                 
-                pybossa.saveTask(task.id, task.answer).done(function() {
-                    deferred.resolve();
-                });
-                console.log('datos salvados');
+                // Prueba para controlar el array de puntos y localización
+                if (verifyPoints()){
+                  pybossa.saveTask(task.id, task.answer).done(function() {
+                      deferred.resolve();
+                  });
+                  console.log('datos salvados');
+                }
+
 
                 $("#step1").show();
                 $("#success").show();
@@ -710,6 +714,17 @@ function readAllValues(selectbox){
     }
   }  
   return ret;
+}
+
+function verifyPoints(){
+  var countXY = document.getElementById('xyValues').options.length;
+  var countLONLAT = document.getElementById('lonlatValues').options.length;
+  var devolver = true;
+  if (countXY != countLONLAT){
+    alert('The number of points must be the same as lonlat');
+    devolver = false;
+  }
+  return devolver;
 }
 
 function getIimDim(urlimage){
