@@ -495,9 +495,21 @@ function loadOSM(lonOSM, latOSM, zoomOSM){
     mapOSM = new OpenLayers.Map({
         div: "mapOSM",
          projection: "EPSG:4326"
-    });
+      });
 
-    mapOSM.addLayers([gmaplayerSt,gmaplayerSat,osmlayer]);
+// create point in OSM map with task coordinates
+ 	  var locationPointLayer = new OpenLayers.Layer.Vector('Location', {
+ 	    styleMap: new OpenLayers.StyleMap({
+ 	      pointRadius: "5",
+	      fillColor: "#00cc00",
+	      }),
+	    renderers: renderer
+	    });
+	  var point = new OpenLayers.Geometry.Point(eval(lonOSM),eval(latOSM));
+	  point.transform(fromProjection, toProjection);
+	  var featureP = new OpenLayers.Feature.Vector(point);
+	  locationPointLayer.addFeatures([featureP]);
+	  mapOSM.addLayers([gmaplayerSt,gmaplayerSat,osmlayer, locationPointLayer]);
     
     mapOSM.addControl(new OpenLayers.Control.LayerSwitcher());
 
@@ -505,7 +517,6 @@ function loadOSM(lonOSM, latOSM, zoomOSM){
     mapOSM.setCenter(centerPosition, zoomOSM );
 
     mapOSM.events.register('click', mapOSM, handleMapClick);
-
 
     //load VIIRS help map
     mapVIIRS = new ol.Map({
@@ -539,6 +550,14 @@ function changeMapOSM(lonOSM, latOSM, zoomOSM){
   var centerPosition = new OpenLayers.LonLat(eval(lonOSM),eval(latOSM)).transform( fromProjection, toProjection);
   mapOSM.setCenter(centerPosition, zoomOSM );
 
+  // update point with lat and lon values
+	var locationPointLayer = mapOSM.getLayersByName('Location')[0];
+	locationPointLayer.removeAllFeatures();
+	var point = new OpenLayers.Geometry.Point(eval(lonOSM),eval(latOSM));
+	point.transform(fromProjection, toProjection);
+	var featureP = new OpenLayers.Feature.Vector(point);
+	locationPointLayer.addFeatures([featureP]);
+	 
   // change VIIRS
   mapVIIRS.removeLayer(nadirLayer);
   var icons = [];
