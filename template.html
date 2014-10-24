@@ -303,7 +303,6 @@ pybossa.presentTask(function(task, deferred) {
                 pybossa.saveTask(task.id, task.answer).done(function() {
                     deferred.resolve();
                 });
-                $("#loading").show();
               }
 
             }
@@ -602,7 +601,7 @@ function addPointLayer(){
 var pointLayer;
 
 var renderer = OpenLayers.Util.getParameters(window.location.href).renderer;
-enderer = (renderer) ? [renderer] : OpenLayers.Layer.Vector.prototype.renderers;
+renderer = (renderer) ? [renderer] : OpenLayers.Layer.Vector.prototype.renderers;
 var pointLayerOSM = new OpenLayers.Layer.Vector('Points', {
         styleMap: new OpenLayers.StyleMap({
             pointRadius: "5", 
