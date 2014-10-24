@@ -343,12 +343,8 @@ var iconStyleVIIRS = new ol.style.Style({
   image: new ol.style.Circle({
       radius: 5,
       fill: new ol.style.Fill({
-          color: [255, 0, 0, 1]
+          color: [0, 204, 0, 1]
       }),
-      stroke: new ol.style.Stroke({
-          color: [255, 0, 0, 1],
-          width: 1.5
-      })
   }),
   zIndex: 1
 });
@@ -479,9 +475,6 @@ function handleMapClick(evt) {
       }
     } 
 
-
-
-
 var mapOSM;
 var osmlayer = new OpenLayers.Layer.OSM();
 var gmaplayerSt = new OpenLayers.Layer.Google("Google Streets",{numZoomLevels: 20});
@@ -502,6 +495,7 @@ function loadOSM(lonOSM, latOSM, zoomOSM){
  	    styleMap: new OpenLayers.StyleMap({
  	      pointRadius: "5",
 	      fillColor: "#00cc00",
+	      strokeWidth: "0"
 	      }),
 	    renderers: renderer
 	    });
