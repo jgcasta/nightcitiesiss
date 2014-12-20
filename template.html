@@ -82,10 +82,7 @@
         </div><!-- End of DIV for the submission buttons -->
 
         <!-- Link to picture data provided by NASA site -->
-<<<<<<< HEAD
-        <div><span class="label label-danger">Please, be patient with large ISS images</span><br>
-          Use the [+] and [-] buttons to Zoom In and Zoom Out. Keep Shift + Left mouse button pressed while moving the mouse will rotate the image.<br><a id="hrefPicture" href='' target='_blank'>ISS picture data - Earth Science and Remote Sensing Unit, NASA-Johnson Space Center. "The Gateway to Astronaut Photography of Earth."</a></div>
-=======
+
         <div>
           <span class="label label-danger" id="i18n_wait">Please, be patient with large ISS images</span><br><br>
           <span id="i18n_zoom">Green point indicates either the likely city from Lost At Night, or the original ISS location at picture time. 
@@ -93,7 +90,7 @@
           Keep Shift + Left mouse button pressed while moving the mouse will rotate the image.</span><br>
           <a id="hrefPicture" href='' target='_blank'>ISS picture data - Earth Science and Remote Sensing Unit, NASA-Johnson Space Center. "The Gateway to Astronaut Photography of Earth."</a>
           </div>
->>>>>>> 37d67be55079269686901a11c53179068f82044f
+
 
         <!-- These are maps -->
         <div id="map" class="map"></div>
@@ -251,13 +248,10 @@ pybossa.presentTask(function(task, deferred) {
             
         // first time I load the whole map
         if (firstTime){
-<<<<<<< HEAD
+
             loadOSM(task.info.citylon,task.info.citylat,9);
             loadISSImage(task.info.link_big.replace('sseop/images','DatabaseImages'));
-=======
-            loadOSM(task.info.citylon,task.info.citylat,7);
-            loadISSImage(task.info.link_big);
->>>>>>> 37d67be55079269686901a11c53179068f82044f
+
             firstTime = false;
         }
         else {
@@ -275,12 +269,10 @@ pybossa.presentTask(function(task, deferred) {
         $('#task-id').html(task.id);
         $('.btn-answer').off('click').on('click', function(evt) {
 
-<<<<<<< HEAD
+
             var answer = $(evt.target).attr("value");
             urlImage = task.info.link_big.replace('sseop/images','DatabaseImages');
-=======
-            var answer = $(this).attr("value");
->>>>>>> 37d67be55079269686901a11c53179068f82044f
+
 
             if (typeof answer != 'undefined') {
 
