@@ -82,8 +82,13 @@
         </div><!-- End of DIV for the submission buttons -->
 
         <!-- Link to picture data provided by NASA site -->
-        <div><span class="label label-danger">Please, be patient with large ISS images</span><br>
-          Use the [+] and [-] buttons to Zoom In and Zoom Out. Keep Shift + Left mouse button pressed while moving the mouse will rotate the image.<br><a id="hrefPicture" href='' target='_blank'>ISS picture data - Earth Science and Remote Sensing Unit, NASA-Johnson Space Center. "The Gateway to Astronaut Photography of Earth."</a></div>
+        <div>
+          <span class="label label-danger" id="i18n_wait">Please, be patient with large ISS images</span><br><br>
+          <span id="i18n_zoom">Green point indicates either the likely city from Lost At Night, or the original ISS location at picture time. 
+          Use the [+] and [-] buttons to Zoom In and Zoom Out. 
+          Keep Shift + Left mouse button pressed while moving the mouse will rotate the image.</span><br>
+          <a id="hrefPicture" href='' target='_blank'>ISS picture data - Earth Science and Remote Sensing Unit, NASA-Johnson Space Center. "The Gateway to Astronaut Photography of Earth."</a>
+          </div>
 
         <!-- These are maps -->
         <div id="map" class="map"></div>
@@ -97,7 +102,7 @@
             &nbsp;<SELECT id="xyValues" NAME="xyValues" class="txtISS" MULTIPLE size=5 width=5></SELECT>
             <SELECT id="lonlatValues" NAME="lonlatValues" class="txtOSM" MULTIPLE size=5 width=7></SELECT>
             <br><br><br><br><br><br>
-            &nbsp;<span class="label label-info">&nbsp;&nbsp;2012 Night View from NPP-VIIRS. Red point indicates ISS nadir&nbsp;&nbsp;</span>
+            <span class="label label-info" id="i18n_viirs">2012 Night View from NPP-VIIRS</span>
             <div id="mapVIIRS" class="mapVIIRS"></div>
         </form>
     </div><!-- End of DIV for the submission buttons -->
@@ -236,7 +241,9 @@ pybossa.presentTask(function(task, deferred) {
     if ( !$.isEmptyObject(task) ) {
         
         loadUserProgress();
-
+        $("#hrefPicture").attr("href",task.info.linkData);
+        $("#fb-like").attr("data-href",task.info.linkData);
+            
         // first time I load the whole map
         if (firstTime){
             loadOSM(task.info.citylon,task.info.citylat,7);
@@ -257,10 +264,8 @@ pybossa.presentTask(function(task, deferred) {
         $("#question").html(task.info.question);
         $('#task-id').html(task.id);
         $('.btn-answer').off('click').on('click', function(evt) {
-            $("#hrefPicture").attr("href",task.info.linkData);
-            $("#fb-like").attr("data-href",task.info.linkData);
 
-            var answer = $(evt.target).attr("value");
+            var answer = $(this).attr("value");
 
             if (typeof answer != 'undefined') {
 
@@ -284,6 +289,8 @@ pybossa.presentTask(function(task, deferred) {
                     });
                     $("#success").hide();
                     console.log('datos salvados');
+                } else {
+                    $("#step1").show();	
                 }
 
               }else if (answer == '404'){
@@ -298,7 +305,6 @@ pybossa.presentTask(function(task, deferred) {
                 pybossa.saveTask(task.id, task.answer).done(function() {
                     deferred.resolve();
                 });
-                $("#loading").show();
               }
 
             }
@@ -343,12 +349,8 @@ var iconStyleVIIRS = new ol.style.Style({
   image: new ol.style.Circle({
       radius: 5,
       fill: new ol.style.Fill({
-          color: [255, 0, 0, 1]
+          color: [0, 204, 0, 1]
       }),
-      stroke: new ol.style.Stroke({
-          color: [255, 0, 0, 1],
-          width: 1.5
-      })
   }),
   zIndex: 1
 });
@@ -479,9 +481,6 @@ function handleMapClick(evt) {
       }
     } 
 
-
-
-
 var mapOSM;
 var osmlayer = new OpenLayers.Layer.OSM();
 var gmaplayerSt = new OpenLayers.Layer.Google("Google Streets",{numZoomLevels: 20});
@@ -495,9 +494,22 @@ function loadOSM(lonOSM, latOSM, zoomOSM){
     mapOSM = new OpenLayers.Map({
         div: "mapOSM",
          projection: "EPSG:4326"
-    });
+      });
 
-    mapOSM.addLayers([gmaplayerSt,gmaplayerSat,osmlayer]);
+// create point in OSM map with task coordinates
+ 	  var locationPointLayer = new OpenLayers.Layer.Vector('Location', {
+ 	    styleMap: new OpenLayers.StyleMap({
+ 	      pointRadius: "5",
+	      fillColor: "#00cc00",
+	      strokeWidth: "0"
+	      }),
+	    renderers: renderer
+	    });
+	  var point = new OpenLayers.Geometry.Point(eval(lonOSM),eval(latOSM));
+	  point.transform(fromProjection, toProjection);
+	  var featureP = new OpenLayers.Feature.Vector(point);
+	  locationPointLayer.addFeatures([featureP]);
+	  mapOSM.addLayers([gmaplayerSt,gmaplayerSat,osmlayer, locationPointLayer]);
     
     mapOSM.addControl(new OpenLayers.Control.LayerSwitcher());
 
@@ -505,7 +517,6 @@ function loadOSM(lonOSM, latOSM, zoomOSM){
     mapOSM.setCenter(centerPosition, zoomOSM );
 
     mapOSM.events.register('click', mapOSM, handleMapClick);
-
 
     //load VIIRS help map
     mapVIIRS = new ol.Map({
@@ -539,6 +550,14 @@ function changeMapOSM(lonOSM, latOSM, zoomOSM){
   var centerPosition = new OpenLayers.LonLat(eval(lonOSM),eval(latOSM)).transform( fromProjection, toProjection);
   mapOSM.setCenter(centerPosition, zoomOSM );
 
+  // update point with lat and lon values
+	var locationPointLayer = mapOSM.getLayersByName('Location')[0];
+	locationPointLayer.removeAllFeatures();
+	var point = new OpenLayers.Geometry.Point(eval(lonOSM),eval(latOSM));
+	point.transform(fromProjection, toProjection);
+	var featureP = new OpenLayers.Feature.Vector(point);
+	locationPointLayer.addFeatures([featureP]);
+	 
   // change VIIRS
   mapVIIRS.removeLayer(nadirLayer);
   var icons = [];
@@ -584,7 +603,7 @@ function addPointLayer(){
 var pointLayer;
 
 var renderer = OpenLayers.Util.getParameters(window.location.href).renderer;
-enderer = (renderer) ? [renderer] : OpenLayers.Layer.Vector.prototype.renderers;
+renderer = (renderer) ? [renderer] : OpenLayers.Layer.Vector.prototype.renderers;
 var pointLayerOSM = new OpenLayers.Layer.Vector('Points', {
         styleMap: new OpenLayers.StyleMap({
             pointRadius: "5", 
@@ -720,6 +739,9 @@ function verifyPoints(){
   var devolver = true;
   if (countXY != countLONLAT){
     alert('The number of points must be the same as lonlat');
+    devolver = false;
+  } else if (countXY == 0){
+    alert('Please enter at least one point and matching lonlat');
     devolver = false;
   }
   return devolver;
