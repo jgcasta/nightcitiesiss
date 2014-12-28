@@ -1,5 +1,5 @@
 
-  <link href="http://www.iderail.es/testiss/css/ol.css" rel="stylesheet">
+    <link href="http://www.iderail.es/testiss/css/ol.css" rel="stylesheet">
   <style type="text/css">
   .map {
     float: left;
@@ -82,13 +82,15 @@
         </div><!-- End of DIV for the submission buttons -->
 
         <!-- Link to picture data provided by NASA site -->
+
         <div>
           <span class="label label-danger" id="i18n_wait">Please, be patient with large ISS images</span><br><br>
           <span id="i18n_zoom">Green point indicates either the likely city from Lost At Night, or the original ISS location at picture time. 
-          Use the [+] and [-] buttons to Zoom In and Zoom Out. 
+          Use the [+] and [-] buttons to Zoom In and Zoom Out. The VIIRS maps will be updated whe you change the central view
           Keep Shift + Left mouse button pressed while moving the mouse will rotate the image.</span><br>
           <a id="hrefPicture" href='' target='_blank'>ISS picture data - Earth Science and Remote Sensing Unit, NASA-Johnson Space Center. "The Gateway to Astronaut Photography of Earth."</a>
           </div>
+
 
         <!-- These are maps -->
         <div id="map" class="map"></div>
@@ -246,8 +248,10 @@ pybossa.presentTask(function(task, deferred) {
             
         // first time I load the whole map
         if (firstTime){
-            loadOSM(task.info.citylon,task.info.citylat,7);
-            loadISSImage(task.info.link_big);
+
+            loadOSM(task.info.citylon,task.info.citylat,9);
+            loadISSImage(task.info.link_big.replace('sseop/images','DatabaseImages'));
+
             firstTime = false;
         }
         else {
@@ -265,7 +269,10 @@ pybossa.presentTask(function(task, deferred) {
         $('#task-id').html(task.id);
         $('.btn-answer').off('click').on('click', function(evt) {
 
-            var answer = $(this).attr("value");
+
+            var answer = $(evt.target).attr("value");
+            urlImage = task.info.link_big.replace('sseop/images','DatabaseImages');
+
 
             if (typeof answer != 'undefined') {
 
@@ -481,6 +488,19 @@ function handleMapClick(evt) {
       }
     } 
 
+function handleMapMoveStart(evt){
+  
+  var lonlat = mapOSM.getCenter().transform(new OpenLayers.Projection("EPSG:900913"), new OpenLayers.Projection("EPSG:4326"));
+  updateMapVIIRS(lonlat.lon.toFixed(6), lonlat.lat.toFixed(6), mapOSM.getZoom());
+}
+
+function updateMapVIIRS(lonOSM, latOSM, zoomOSM){
+
+  mapVIIRS.getView().setZoom(zoomOSM - 1);
+  mapVIIRS.getView().setCenter([eval(lonOSM),eval(latOSM)]);
+
+}
+
 var mapOSM;
 var osmlayer = new OpenLayers.Layer.OSM();
 var gmaplayerSt = new OpenLayers.Layer.Google("Google Streets",{numZoomLevels: 20});
@@ -493,11 +513,12 @@ function loadOSM(lonOSM, latOSM, zoomOSM){
 
     mapOSM = new OpenLayers.Map({
         div: "mapOSM",
-         projection: "EPSG:4326"
+         //projection: "EPSG:4326",
+         maxResolution: 'auto'
       });
 
 // create point in OSM map with task coordinates
- 	  var locationPointLayer = new OpenLayers.Layer.Vector('Location', {
+ 	  var locationPointLayer = new OpenLayers.Layer.Vector('LostAtNight Location', {
  	    styleMap: new OpenLayers.StyleMap({
  	      pointRadius: "5",
 	      fillColor: "#00cc00",
@@ -509,6 +530,13 @@ function loadOSM(lonOSM, latOSM, zoomOSM){
 	  point.transform(fromProjection, toProjection);
 	  var featureP = new OpenLayers.Feature.Vector(point);
 	  locationPointLayer.addFeatures([featureP]);
+
+    // Add DMSP WMS layer
+        var F162006 = new OpenLayers.Layer.WMS( "2006", 
+                "http://mapserver.ngdc.noaa.gov/cgi-bin/public/ms/gcv4?",
+                {layers: 'F182010.v4c_web.stable_lights.avg_vis.lzw.tif'},
+                {projection: 'EPSG:4326'});    
+
 	  mapOSM.addLayers([gmaplayerSt,gmaplayerSat,osmlayer, locationPointLayer]);
     
     mapOSM.addControl(new OpenLayers.Control.LayerSwitcher());
@@ -517,6 +545,7 @@ function loadOSM(lonOSM, latOSM, zoomOSM){
     mapOSM.setCenter(centerPosition, zoomOSM );
 
     mapOSM.events.register('click', mapOSM, handleMapClick);
+    mapOSM.events.register('moveend', mapOSM, handleMapMoveStart);  
 
     //load VIIRS help map
     mapVIIRS = new ol.Map({
@@ -541,6 +570,8 @@ function loadOSM(lonOSM, latOSM, zoomOSM){
     nadirLayer = new ol.layer.Vector({ source: new ol.source.Vector({ features: icons }) });
   
     mapVIIRS.addLayer(nadirLayer);
+
+    updateMapVIIRS(eval(lonOSM),eval(latOSM),zoomOSM);
 
 }
 
