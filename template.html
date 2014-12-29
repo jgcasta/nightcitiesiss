@@ -717,29 +717,23 @@ function addOption(selectbox,text,value ){
 
 var removed = false;
 function removeOptions(){
-    removed = true;
-    pointLayerOSM.destroyFeatures();
-    var xyDeleted = false;
-    for(var i=0; i<dataList.xyValues.options.length-1;i++){
-      
-      if(dataList.xyValues.options[i].selected){
-        window.map.removeLayer(pointLayer);
-        dataList.xyValues.remove(i);
-        dataList.lonlatValues.remove(i);
-        xyDeleted = true;
-        addPointLayer();
-        addPointLayerOSM();
-      }
-      if( !xyDeleted && dataList.lonlatValues.options[i].selected ){
-        window.map.removeLayer(pointLayer);
-        dataList.lonlatValues.remove(i);
-        dataList.xyValues.remove(i);
-        xyDeleted = false;
-        addPointLayerOSM();
-        addPointLayer();
-      }
-    }
-    
+	removed = true;
+	pointLayerOSM.destroyFeatures();
+	var m = dataList.xyValues.options.length;
+	if (dataList.lonlatValues.options.length > m) { m = dataList.lonlatValues.options.length; }
+	for(var i=m-1; i>=0; i--){
+		if((i<dataList.xyValues.options.length && dataList.xyValues.options[i].selected) || (i<dataList.lonlatValues.options.length && dataList.lonlatValues.options[i].selected)){
+			if(i<dataList.xyValues.options.length){
+				window.map.removeLayer(pointLayer);
+				dataList.xyValues.remove(i);
+			}
+			if(i<dataList.lonlatValues.options.length){
+				dataList.lonlatValues.remove(i);
+			}
+		}
+	}
+	addPointLayer();
+	addPointLayerOSM();
 }
 
 function removeAllOptions(){
