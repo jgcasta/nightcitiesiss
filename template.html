@@ -86,7 +86,7 @@
           <span class="label label-danger" id="i18n_wait">Please, be patient with large ISS images</span><br><br>
           <span id="i18n_zoom">Green point indicates either the likely city from Lost At Night, or the original ISS location at picture time. 
           Use the [+] and [-] buttons to Zoom In and Zoom Out. The VIIRS maps will be updated whe you change the central view
-          Keep Shift + Left mouse button pressed while moving the mouse will rotate the image.</span><br>
+          Keep Shift + Left mouse button pressed while moving the mouse will rotate the image.</span><br>Please, try to place a point over every yellow rectangle of the image
           <a id="hrefPicture" href='' target='_blank'>ISS picture data - Earth Science and Remote Sensing Unit, NASA-Johnson Space Center. "The Gateway to Astronaut Photography of Earth."</a>
           </div>
 
@@ -367,6 +367,8 @@ var map;
 var ISSlayer;
 
 
+var gridLayer;
+
 function createISSLayer(urlImage, imgX, imgY){
 
      pixelProjection = new ol.proj.Projection({
@@ -374,7 +376,33 @@ function createISSLayer(urlImage, imgX, imgY){
       units: 'pixels',
       extent: [0, 0, eval(imgX), eval(imgY)] 
 
-    });;
+    });
+
+    var x1 = eval(imgX) / 3;
+    var x2 = x1 * 2;
+    var y1 = eval(imgY) / 3;
+    var y2 = y1 * 2;
+
+    var gridStyle =   new ol.style.Style({
+                        stroke: new ol.style.Stroke({
+                          color: 'yellow',
+                          width: 1
+                        })
+                      });
+
+    var gridGeoJSON = '{"type":"Feature","geometry":{ "type": "MultiLineString", "coordinates": [ ';
+        gridGeoJSON += '                [ [' + x1 + ', 0.0], [' + x1 + ', ' + imgY + '] ] , ';
+        gridGeoJSON += '                [ [' + x2 + ', 0.0], [' + x2 + ', ' + imgY + '] ] , ';        
+        gridGeoJSON += '                [ [0.0, ' + y1 + '], [' + imgX + ', ' + y1 + '] ] , ';            
+        gridGeoJSON += '                [ [0.0, ' + y2 + '], [' + imgX + ', ' + y2 + '] ] ] ';             
+        gridGeoJSON += '            }}';
+
+    gridLayer = new ol.layer.Vector({
+        source: new ol.source.GeoJSON({
+            text: gridGeoJSON
+        }),
+        style: gridStyle
+    });
 
     ISSlayer = new ol.layer.Image({
         source: new ol.source.ImageStatic({
@@ -412,7 +440,7 @@ function loadISSImage(urlImage){
         interactions: ol.interaction.defaults().extend([
           new ol.interaction.DragRotateAndZoom()
         ]),
-        layers: [ISSlayer],
+        layers: [ISSlayer,gridLayer],
 
         target: 'map',
 
