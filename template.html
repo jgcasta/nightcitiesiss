@@ -491,6 +491,7 @@ function loadNewISSImage(urlImage){
     map.removeLayer(ISSlayer);
     createISSLayer(urlImage, dimX, dimY); 
     map.addLayer(ISSlayer);
+    map.addLayer(gridLayer);
     $('#map').show();
 
     $("#loading").hide();
