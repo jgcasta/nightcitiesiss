@@ -85,7 +85,7 @@
         <div>
           <span class="label label-danger" id="i18n_wait">Please, be patient with large ISS images</span><br><br>
           <span id="i18n_zoom">Green point indicates either the likely city from Lost At Night, or the original ISS location at picture time. 
-          Use the [+] and [-] buttons to Zoom In and Zoom Out. The VIIRS maps will be updated whe you change the central view
+          Use the [+] and [-] buttons to Zoom In and Zoom Out. The VIIRS 2014 maps will be updated whe you change the central view
           Keep Shift + Left mouse button pressed while moving the mouse will rotate the image.</span><br>Please, try to place a point over every yellow rectangle of the image
           <a id="hrefPicture" href='' target='_blank'>ISS picture data - Earth Science and Remote Sensing Unit, NASA-Johnson Space Center. "The Gateway to Astronaut Photography of Earth."</a>
           </div>
@@ -577,6 +577,17 @@ function loadOSM(lonOSM, latOSM, zoomOSM){
     mapOSM.events.register('moveend', mapOSM, handleMapMoveStart);  
 
     //load VIIRS help map
+   var viirs2014 = new ol.layer.Tile({
+      source: new ol.source.TileWMS({
+          //url: 'http://webservices.nationalatlas.gov/wms?people',
+          //url:'https://mapsengine.google.com/06518876839643628417-03711100469230671386-4/wms/REQUEST=GetCapabilities',
+          url:'https://mapsengine.google.com/06518876839643628417-03711100469230671386-4/wms/',
+          params: {'LAYERS': '06518876839643628417-13259596722140817478-4',transparent:'true',srs: '4326'}
+       
+        }),
+        opacity:'1.0'
+    });
+
     mapVIIRS = new ol.Map({
       target: 'mapVIIRS',
       layers: [
